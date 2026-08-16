@@ -1,4 +1,6 @@
-// Vertige - Interface complète (setup)
+// ============================================================
+// VERTIGE — Interface
+// ============================================================
 
 const UI = {
   app: null,
@@ -10,16 +12,18 @@ const UI = {
     clothes: { monsieur: [], madame: [] }
   },
 
-  // Listes de référence
   availableProps: [
     'Chantilly', 'Menottes', 'Ceinture', 'Cache-œil', 'Glaçon',
     'Huile de massage', 'Lubrifiant', 'Eau', 'Vibromasseur'
   ],
 
   availableActs: [
-    'Sexe oral vaginal', 'Sexe oral anal',
-    'Pénétration vaginale', 'Pénétration anale',
-    'Doigts vaginaux', 'Doigts anaux',
+    'Sexe oral vaginal',
+    'Sexe oral anal',
+    'Pénétration vaginale',
+    'Pénétration anale',
+    'Doigts vaginaux',
+    'Doigts anaux',
     'Avaler le sperme'
   ],
 
@@ -44,34 +48,39 @@ const UI = {
 
   clear() {
     this.app.innerHTML = '';
+    window.scrollTo(0, 0);
   },
 
-  // ========== 1. MODE ==========
+  // ========== 1. RYTHME ==========
   showModeSelection() {
     this.clear();
     this.app.innerHTML = `
       <div class="header">
         <h1>Vertige</h1>
-        <p>Choisissez votre rythme</p>
+        <p>Choisissez jusqu’où vous irez</p>
       </div>
+
       <div class="modes">
         <div class="mode-card" data-mode="rapide">
           <h2>Rapide</h2>
-          <div class="duration">≈ 20 à 30 minutes</div>
-          <p>Montée rapide. Peu de questions, intensité qui grimpe vite.</p>
+          <div class="duration">≈ 20 – 30 minutes</div>
+          <p>Peu de questions. La pression monte vite. On ne traîne pas.</p>
         </div>
+
         <div class="mode-card" data-mode="pose">
           <h2>Posé</h2>
-          <div class="duration">≈ 45 à 70 minutes</div>
-          <p>Progression sensuelle. On prend le temps de monter ensemble.</p>
+          <div class="duration">≈ 45 – 70 minutes</div>
+          <p>On prend le temps. Chaque réponse compte. La chaleur s’installe.</p>
         </div>
+
         <div class="mode-card" data-mode="marathon">
           <h2>Marathon</h2>
           <div class="duration">≈ 1h30 et plus</div>
-          <p>Longue exploration. Plusieurs vagues, surprises et profondeur.</p>
+          <p>Longue descente. Plusieurs vagues. On ne revient pas indemne.</p>
         </div>
       </div>
     `;
+
     document.querySelectorAll('.mode-card').forEach(card => {
       card.addEventListener('click', () => {
         this.state.mode = card.dataset.mode;
@@ -86,24 +95,31 @@ const UI = {
     this.app.innerHTML = `
       <div class="header">
         <h1>Vertige</h1>
-        <p>Comment vous appeler ce soir ?</p>
+        <p>Vos prénoms pour ce soir</p>
       </div>
+
       <div class="form-container">
         <div class="input-group">
           <label>Monsieur</label>
-          <input type="text" id="name-monsieur" placeholder="Son prénom" autocomplete="off">
+          <input type="text" id="name-monsieur" placeholder="Son prénom" autocomplete="off" autocapitalize="words">
         </div>
+
         <div class="input-group">
           <label>Madame</label>
-          <input type="text" id="name-madame" placeholder="Son prénom" autocomplete="off">
+          <input type="text" id="name-madame" placeholder="Son prénom" autocomplete="off" autocapitalize="words">
         </div>
-        <button class="btn btn-primary full" id="btn-names">Continuer</button>
+
+        <button class="btn btn-primary mt" id="btn-names">Continuer</button>
       </div>
     `;
+
     document.getElementById('btn-names').addEventListener('click', () => {
       const m = document.getElementById('name-monsieur').value.trim();
       const f = document.getElementById('name-madame').value.trim();
-      if (!m || !f) return alert('Merci de renseigner les deux prénoms');
+      if (!m || !f) {
+        alert('Les deux prénoms sont nécessaires.');
+        return;
+      }
       this.state.names.monsieur = m;
       this.state.names.madame = f;
       this.showProps();
@@ -113,7 +129,7 @@ const UI = {
   // ========== 3. ACCESSOIRES ==========
   showProps() {
     this.clear();
-    let html = this.availableProps.map(p => `
+    const html = this.availableProps.map(p => `
       <label class="check-item">
         <input type="checkbox" value="${p}">
         <span>${p}</span>
@@ -123,10 +139,12 @@ const UI = {
     this.app.innerHTML = `
       <div class="header">
         <h1>Vertige</h1>
-        <p>Quels accessoires avez-vous sous la main ?</p>
+        <p>Ce que vous avez à disposition</p>
+        <span class="small">Cochez uniquement ce qui est réellement à portée de main.</span>
       </div>
+
       <div class="check-list">${html}</div>
-      <button class="btn btn-primary full" id="btn-props">Continuer</button>
+      <button class="btn btn-primary" id="btn-props">Continuer</button>
     `;
 
     document.getElementById('btn-props').addEventListener('click', () => {
@@ -135,10 +153,10 @@ const UI = {
     });
   },
 
-  // ========== 4. ACTES AUTORISÉS ==========
+  // ========== 4. ACTES ==========
   showActs() {
     this.clear();
-    let html = this.availableActs.map(a => `
+    const html = this.availableActs.map(a => `
       <label class="check-item">
         <input type="checkbox" value="${a}" checked>
         <span>${a}</span>
@@ -148,11 +166,12 @@ const UI = {
     this.app.innerHTML = `
       <div class="header">
         <h1>Vertige</h1>
-        <p>Quels actes sont autorisés ce soir ?</p>
-        <p class="small">Tout est coché par défaut. Décochez ce que vous ne souhaitez pas.</p>
+        <p>Ce qui est autorisé ce soir</p>
+        <span class="small">Tout est coché. Retirez seulement ce que vous refusez clairement.</span>
       </div>
+
       <div class="check-list">${html}</div>
-      <button class="btn btn-primary full" id="btn-acts">Continuer</button>
+      <button class="btn btn-primary" id="btn-acts">Continuer</button>
     `;
 
     document.getElementById('btn-acts').addEventListener('click', () => {
@@ -165,7 +184,7 @@ const UI = {
   showClothes() {
     this.clear();
 
-    const makeList = (list, id) => list.map(item => `
+    const makeList = (list) => list.map(item => `
       <label class="check-item small">
         <input type="checkbox" value="${item}">
         <span>${item}</span>
@@ -175,7 +194,8 @@ const UI = {
     this.app.innerHTML = `
       <div class="header">
         <h1>Vertige</h1>
-        <p>Comment êtes-vous habillés en ce moment ?</p>
+        <p>Votre tenue actuelle</p>
+        <span class="small">Le jeu s’en servira. Soyez précis.</span>
       </div>
 
       <div class="clothes-grid">
@@ -193,7 +213,7 @@ const UI = {
         </div>
       </div>
 
-      <button class="btn btn-primary full" id="btn-clothes">Continuer</button>
+      <button class="btn btn-primary" id="btn-clothes">Continuer</button>
     `;
 
     document.getElementById('btn-clothes').addEventListener('click', () => {
@@ -204,32 +224,39 @@ const UI = {
   },
 
   // ========== 6. PROMESSE ==========
-showPromise() {
+  showPromise() {
     this.clear();
     this.app.innerHTML = `
       <div class="header">
         <h1>Vertige</h1>
-        <p>Une dernière chose...</p>
+        <p>Le seuil</p>
       </div>
 
       <div class="promise">
         <p>
-          ${this.state.names.monsieur} et ${this.state.names.madame},<br><br>
-          Ce soir, vous vous engagez pleinement.<br><br>
-          Vous jouez jusqu’au bout.<br>
-          Vous ne trichez pas.<br>
-          Vous n’arrêtez pas le jeu.<br><br>
-          C’est <strong>Vertige</strong> qui décidera quand la partie est terminée.
+          ${this.state.names.monsieur} et ${this.state.names.madame}.
         </p>
-
+        <p>
+          Ce soir, vous ne jouez pas.<br>
+          Vous vous abandonnez.
+        </p>
+        <p>
+          Vous avancez jusqu’au bout.<br>
+          Vous ne trichez pas.<br>
+          Vous n’interrompez pas.
+        </p>
+        <p>
+          C’est <strong>Vertige</strong> qui décidera<br>
+          quand vos corps auront assez tremblé.
+        </p>
         <p class="signature">
-          Vous vous abandonnez l’un à l’autre,<br>
-          et au jeu.
+          Vous vous donnez l’un à l’autre.<br>
+          Et au jeu.
         </p>
       </div>
 
-      <button class="btn btn-primary full" id="btn-start">
-        Nous nous engageons — Commencer
+      <button class="btn btn-primary" id="btn-start">
+        Nous franchissons le seuil
       </button>
     `;
 
@@ -244,14 +271,17 @@ showPromise() {
     this.app.innerHTML = `
       <div class="header">
         <h1>Vertige</h1>
-        <p>Le jeu commence...</p>
+        <p>Le jeu commence</p>
       </div>
-      <p style="text-align:center;color:var(--text-soft);margin-top:3rem;line-height:1.7;">
-        Mode : <strong>${this.state.mode}</strong><br>
-        ${this.state.names.monsieur} & ${this.state.names.madame}<br><br>
-        (Prochaine étape : le vrai moteur de jeu)
-      </p>
+      <div class="promise">
+        <p style="color: var(--text-soft); font-size: 1rem;">
+          Mode : <strong>${this.state.mode}</strong><br><br>
+          ${this.state.names.monsieur} & ${this.state.names.madame}<br><br>
+          Tout est prêt.<br>
+          Le moteur de jeu arrive.
+        </p>
+      </div>
     `;
-    console.log('État complet du jeu :', this.state);
+    console.log('État du jeu :', this.state);
   }
 };
