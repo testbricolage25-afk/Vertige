@@ -1,15 +1,22 @@
-/* Vertige - Style élégant & sensuel */
+/* ============================================================
+   VERTIGE — Style
+   Élégant • Sensuel • Sombre • Inévitable
+   ============================================================ */
 
 :root {
-  --bg: #0c0a0b;
-  --bg-soft: #161214;
-  --bg-card: #1c1719;
-  --text: #f3ebe6;
-  --text-soft: #c9b8b0;
+  --bg: #090708;
+  --bg-soft: #120f11;
+  --bg-card: #1a1518;
+  --bg-card-hover: #211c1f;
+  --text: #f4ece7;
+  --text-soft: #b9a79f;
+  --text-muted: #7a6b66;
   --accent: #c45c6a;
-  --accent-soft: #e8a0a8;
-  --gold: #d4a574;
-  --border: rgba(196, 92, 106, 0.35);
+  --accent-soft: #e09aa3;
+  --accent-dim: rgba(196, 92, 106, 0.25);
+  --border: rgba(196, 92, 106, 0.22);
+  --border-strong: rgba(196, 92, 106, 0.45);
+  --gold: #c9a87c;
 }
 
 * {
@@ -19,79 +26,102 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html, body {
+  height: 100%;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.55;
   min-height: 100vh;
-  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 #app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 2rem 1.4rem 3rem;
+  padding: 2.2rem 1.5rem 3.5rem;
+  max-width: 480px;
+  margin: 0 auto;
 }
 
-/* Header commun */
+/* ---------- Header ---------- */
 .header {
   text-align: center;
   margin-bottom: 2.8rem;
 }
 
 .header h1 {
-  font-size: 2.1rem;
+  font-size: 2.4rem;
   font-weight: 300;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.42em;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
+  color: var(--text);
+  margin-bottom: 0.7rem;
+  line-height: 1.1;
 }
 
 .header p {
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   color: var(--text-soft);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
+  font-weight: 400;
 }
 
-/* Cartes de mode */
+.header .small {
+  display: block;
+  margin-top: 0.7rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ---------- Mode cards ---------- */
 .modes {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
-  max-width: 420px;
-  margin: 0 auto;
+  gap: 1rem;
   width: 100%;
 }
 
 .mode-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 1.5rem 1.4rem;
-  text-align: left;
+  border-radius: 8px;
+  padding: 1.45rem 1.4rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .mode-card:active {
-  border-color: var(--accent);
-  background: #221c1f;
+  border-color: var(--border-strong);
+  background: var(--bg-card-hover);
+  transform: scale(0.985);
 }
 
 .mode-card h2 {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   font-weight: 500;
-  margin-bottom: 0.35rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.25rem;
+  color: var(--text);
 }
 
 .mode-card .duration {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--accent-soft);
-  margin-bottom: 0.6rem;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.55rem;
+  font-weight: 400;
 }
 
 .mode-card p {
@@ -100,19 +130,146 @@ body {
   line-height: 1.45;
 }
 
-/* Bouton générique */
+/* ---------- Forms & Inputs ---------- */
+.form-container {
+  width: 100%;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-soft);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 0.55rem;
+  font-weight: 500;
+}
+
+.input-group input {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 1.05rem 1.15rem;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.25s ease;
+  font-weight: 400;
+}
+
+.input-group input:focus {
+  border-color: var(--accent);
+}
+
+.input-group input::placeholder {
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
+/* ---------- Check lists ---------- */
+.check-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: 100%;
+  margin-bottom: 1.8rem;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 0.95rem 1.15rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
+  user-select: none;
+}
+
+.check-item:active {
+  border-color: var(--border-strong);
+}
+
+.check-item input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.check-item.small {
+  padding: 0.7rem 0.95rem;
+  font-size: 0.87rem;
+}
+
+/* ---------- Clothes grid ---------- */
+.clothes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.3rem;
+  margin-bottom: 1.8rem;
+}
+
+.clothes-grid h3 {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+/* ---------- Promise ---------- */
+.promise {
+  text-align: center;
+  margin-bottom: 2.8rem;
+  padding: 0 0.3rem;
+}
+
+.promise p {
+  font-size: 1.08rem;
+  color: var(--text-soft);
+  line-height: 1.75;
+  margin-bottom: 1.6rem;
+}
+
+.promise strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.promise .signature {
+  font-size: 1rem;
+  color: var(--accent-soft);
+  font-style: italic;
+  line-height: 1.6;
+  margin-top: 1.8rem;
+}
+
+/* ---------- Buttons ---------- */
 .btn {
   background: transparent;
   border: 1px solid var(--accent);
   color: var(--text);
-  padding: 1rem 2.5rem;
-  font-size: 0.9rem;
-  letter-spacing: 0.18em;
+  padding: 1.05rem 2rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: 3px;
   cursor: pointer;
   transition: all 0.3s ease;
-  display: inline-block;
+  font-weight: 500;
+  width: 100%;
+  display: block;
 }
 
 .btn:active {
@@ -129,127 +286,12 @@ body {
 .btn-primary:active {
   background: var(--accent-soft);
 }
-/* Formulaire prénoms */
-.form-container {
-  max-width: 400px;
-  margin: 0 auto;
-  width: 100%;
-}
 
-.input-group {
-  margin-bottom: 1.6rem;
-  text-align: left;
-}
-
-.input-group label {
-  display: block;
-  font-size: 0.8rem;
-  color: var(--text-soft);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
-}
-
-.input-group input {
-  width: 100%;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 1rem 1.1rem;
-  font-size: 1.05rem;
-  border-radius: 4px;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
-
-.input-group input:focus {
-  border-color: var(--accent);
-}
-
-.input-group input::placeholder {
-  color: #6b5e5a;
-}
-/* Checklist */
-.check-list {
-  max-width: 420px;
-  margin: 0 auto 2rem;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-}
-
-.check-item {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  padding: 0.9rem 1.1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.95rem;
-}
-
-.check-item input {
-  accent-color: var(--accent);
-  width: 18px;
-  height: 18px;
-}
-
-.check-item.small {
-  padding: 0.65rem 0.9rem;
-  font-size: 0.88rem;
-}
-
-/* Tenues */
-.clothes-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.4rem;
-  max-width: 520px;
-  margin: 0 auto 2rem;
-}
-
-.clothes-grid h3 {
-  font-size: 0.95rem;
-  font-weight: 500;
-  margin-bottom: 0.8rem;
-  color: var(--accent-soft);
-  letter-spacing: 0.04em;
-}
-
-/* Promesse */
-.promise {
-  max-width: 440px;
-  margin: 0 auto 2.8rem;
-  text-align: center;
-  line-height: 1.7;
-  color: var(--text-soft);
-  font-size: 1.05rem;
-}
-
-.promise strong {
-  color: var(--text);
-}
-
-.signature {
-  margin-top: 2rem;
-  font-style: italic;
-  color: var(--accent-soft);
-}
-
-/* Utilitaires */
+/* ---------- Utilities ---------- */
 .full {
   width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-  display: block;
 }
 
-.small {
-  font-size: 0.82rem !important;
-  color: var(--text-soft);
-  margin-top: 0.4rem;
-  letter-spacing: 0.03em;
+.mt {
+  margin-top: 1.5rem;
 }
