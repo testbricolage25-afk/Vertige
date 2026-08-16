@@ -129,3 +129,43 @@ body {
 .btn-primary:active {
   background: var(--accent-soft);
 }
+/* Formulaire prénoms */
+.form-container {
+  max-width: 400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.input-group {
+  margin-bottom: 1.6rem;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.input-group input {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 1rem 1.1rem;
+  font-size: 1.05rem;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+  border-color: var(--accent);
+}
+
+.input-group input::placeholder {
+  color: #6b5e5a;
+}
