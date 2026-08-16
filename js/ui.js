@@ -79,4 +79,39 @@ const UI = {
           <input type="text" id="name-madame" placeholder="Son prénom" autocomplete="off">
         </div>
 
-        <button class="btn btn-primary" id="btn-names" style="margin-top:
+        <button class="btn btn-primary" id="btn-names" style="margin-top: 2.5rem; width: 100%;">
+          Continuer
+        </button>
+      </div>
+    `;
+
+    document.getElementById('btn-names').addEventListener('click', () => {
+      const monsieur = document.getElementById('name-monsieur').value.trim();
+      const madame = document.getElementById('name-madame').value.trim();
+
+      if (!monsieur || !madame) {
+        alert('Merci de renseigner les deux prénoms');
+        return;
+      }
+
+      this.state.names.monsieur = monsieur;
+      this.state.names.madame = madame;
+      this.showProps(); // prochaine étape
+    });
+  },
+
+  // ========== PLACEHOLDER prochain écran ==========
+  showProps() {
+    this.clear();
+    this.app.innerHTML = `
+      <div class="header">
+        <h1>Vertige</h1>
+        <p>Écran Accessoires (à venir)</p>
+      </div>
+      <p style="text-align:center;color:var(--text-soft);margin-top:3rem;">
+        Mode : ${this.state.mode}<br>
+        ${this.state.names.monsieur} & ${this.state.names.madame}
+      </p>
+    `;
+  }
+};
