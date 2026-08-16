@@ -1,37 +1,24 @@
 // Vertige - Gestion de l'interface
 
 const UI = {
-  app: null,
-
   init() {
-    this.app = document.getElementById('app');
-    this.showHome();
-  },
+    const app = document.getElementById('app');
+    if (!app) {
+      console.error('Élément #app introuvable');
+      return;
+    }
 
-  clear() {
-    this.app.innerHTML = '';
-  },
+    app.innerHTML = `
+      <h1>Vertige</h1>
+      <p class="subtitle">Réponds ou cède</p>
+      <button class="btn" id="start-btn">Commencer</button>
+    `;
 
-  showHome() {
-    this.clear();
-
-    const title = document.createElement('h1');
-    title.textContent = 'Vertige';
-
-    const subtitle = document.createElement('p');
-    subtitle.className = 'subtitle';
-    subtitle.textContent = 'Réponds ou cède';
-
-    const btn = document.createElement('button');
-    btn.className = 'btn';
-    btn.textContent = 'Commencer';
-    btn.addEventListener('click', () => {
-      // Plus tard on lancera le jeu ici
-      alert('Bientôt...');
-    });
-
-    this.app.appendChild(title);
-    this.app.appendChild(subtitle);
-    this.app.appendChild(btn);
+    const btn = document.getElementById('start-btn');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        alert('Bientôt...');
+      });
+    }
   }
 };
