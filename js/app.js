@@ -1,2 +1,5 @@
 // Vertige - Logique principale
-console.log("Vertige chargé");
+
+document.addEventListener('DOMContentLoaded', () => {
+  UI.init();
+});
