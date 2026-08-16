@@ -204,7 +204,7 @@ const UI = {
   },
 
   // ========== 6. PROMESSE ==========
-  showPromise() {
+showPromise() {
     this.clear();
     this.app.innerHTML = `
       <div class="header">
@@ -215,19 +215,21 @@ const UI = {
       <div class="promise">
         <p>
           ${this.state.names.monsieur} et ${this.state.names.madame},<br><br>
-          Vous vous engagez ce soir à jouer dans le <strong>respect</strong>, 
-          l’<strong>écoute</strong> et la <strong>passion</strong>.<br><br>
-          Vous acceptez de vous laisser guider par le jeu, 
-          tout en gardant le droit d’arrêter à tout moment.
+          Ce soir, vous vous engagez pleinement.<br><br>
+          Vous jouez jusqu’au bout.<br>
+          Vous ne trichez pas.<br>
+          Vous n’arrêtez pas le jeu.<br><br>
+          C’est <strong>Vertige</strong> qui décidera quand la partie est terminée.
         </p>
 
         <p class="signature">
-          Ce soir, vous jouez l’un pour l’autre.
+          Vous vous abandonnez l’un à l’autre,<br>
+          et au jeu.
         </p>
       </div>
 
       <button class="btn btn-primary full" id="btn-start">
-        Nous le promettons — Commencer
+        Nous nous engageons — Commencer
       </button>
     `;
 
