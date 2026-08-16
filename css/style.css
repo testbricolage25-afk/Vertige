@@ -1,13 +1,15 @@
-/* Vertige - Style de base élégant & sensuel */
+/* Vertige - Style élégant & sensuel */
 
 :root {
   --bg: #0c0a0b;
   --bg-soft: #161214;
+  --bg-card: #1c1719;
   --text: #f3ebe6;
   --text-soft: #c9b8b0;
   --accent: #c45c6a;
   --accent-soft: #e8a0a8;
   --gold: #d4a574;
+  --border: rgba(196, 92, 106, 0.35);
 }
 
 * {
@@ -22,53 +24,108 @@ body {
   color: var(--text);
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden;
+  line-height: 1.5;
 }
 
 #app {
-  flex: 1;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem 1.5rem;
+  padding: 2rem 1.4rem 3rem;
+}
+
+/* Header commun */
+.header {
   text-align: center;
+  margin-bottom: 2.8rem;
 }
 
-h1 {
-  font-size: 3.2rem;
+.header h1 {
+  font-size: 2.1rem;
   font-weight: 300;
-  letter-spacing: 0.35em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--text);
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.5rem;
 }
 
-.subtitle {
-  font-size: 0.95rem;
+.header p {
+  font-size: 0.85rem;
   color: var(--text-soft);
-  letter-spacing: 0.18em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-bottom: 4rem;
-  font-weight: 300;
 }
 
+/* Cartes de mode */
+.modes {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  max-width: 420px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.mode-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.5rem 1.4rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mode-card:active {
+  border-color: var(--accent);
+  background: #221c1f;
+}
+
+.mode-card h2 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.04em;
+}
+
+.mode-card .duration {
+  font-size: 0.82rem;
+  color: var(--accent-soft);
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.03em;
+}
+
+.mode-card p {
+  font-size: 0.9rem;
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+/* Bouton générique */
 .btn {
   background: transparent;
   border: 1px solid var(--accent);
   color: var(--text);
-  padding: 1rem 3.2rem;
-  font-size: 0.95rem;
-  letter-spacing: 0.2em;
+  padding: 1rem 2.5rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   border-radius: 2px;
   cursor: pointer;
-  transition: all 0.35s ease;
+  transition: all 0.3s ease;
+  display: inline-block;
 }
 
 .btn:active {
   background: var(--accent);
   color: var(--bg);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+}
+
+.btn-primary:active {
+  background: var(--accent-soft);
 }
