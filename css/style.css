@@ -1,0 +1,23 @@
+/* Vertige - Styles de base */
+
+:root {
+  --bg: #0d0d0d;
+  --text: #f5f0eb;
+  --accent: #c45c6a;
+  --accent-soft: #e8a0a8;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
