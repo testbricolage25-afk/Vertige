@@ -434,3 +434,64 @@ body {
   color: var(--text-muted);
   margin-bottom: 2rem;
 }
+/* ===== JEU ===== */
+.game-header { margin-bottom: 1.6rem; }
+.heat-bar {
+  width: 100%; height: 5px; background: var(--bg-card);
+  border-radius: 3px; overflow: hidden; margin-bottom: 0.6rem;
+}
+.heat-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c45c6a, #e09aa3, #c9a87c);
+  transition: width 0.5s ease;
+}
+.game-meta {
+  display: flex; justify-content: space-between;
+  font-size: 0.72rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.game-meta .level { color: var(--accent-soft); }
+
+.player-turn {
+  text-align: center; font-size: 1.05rem;
+  color: var(--text-soft); margin-bottom: 1.4rem;
+}
+.player-turn strong { color: var(--accent-soft); }
+
+.question-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 1.7rem 1.3rem;
+  margin-bottom: 2rem; text-align: center;
+}
+.question-text { font-size: 1.22rem; line-height: 1.5; }
+.question-hint { margin-top: 0.8rem; font-size: 0.85rem; color: var(--text-muted); }
+
+.buzz-zone { text-align: center; margin-bottom: 2rem; }
+.buzz-hint {
+  font-size: 0.85rem; color: var(--text-muted);
+  margin-bottom: 1.1rem; letter-spacing: 0.04em;
+}
+.btn-buzz {
+  font-size: 1.1rem; padding: 1.3rem; letter-spacing: 0.3em;
+}
+
+.clothes-status {
+  display: flex; justify-content: space-between;
+  font-size: 0.78rem; color: var(--text-muted);
+  text-align: center; margin-top: 1rem;
+}
+
+.gage-card {
+  background: var(--bg-card); border: 1px solid var(--border-strong);
+  border-radius: 8px; padding: 2rem 1.4rem;
+  text-align: center; margin-bottom: 1.6rem;
+}
+.gage-label {
+  font-size: 0.72rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 1.1rem;
+}
+.gage-text { font-size: 1.18rem; line-height: 1.55; }
+.gage-timer {
+  margin-top: 1.4rem; font-size: 2.4rem;
+  font-weight: 300; color: var(--accent);
+}
