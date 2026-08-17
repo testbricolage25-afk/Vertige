@@ -702,3 +702,27 @@ body {
   padding: 0.65rem;
   width: 100%;
 }
+
+.btn-dice {
+  margin-top: 0.5rem;
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  padding: 0.7rem;
+  width: 100%;
+}
+
+.rps-score {
+  text-align: center;
+  font-size: 1.1rem;
+  margin: 1.5rem 0;
+  color: var(--accent-soft);
+}
+
+.rps-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
