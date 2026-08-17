@@ -34,7 +34,6 @@ const UI = {
     'Cheveux attachés', 'Chaussettes', 'Chaussures', 'Collant'
   ],
 
-  // Durées aléatoires du timer invisible (min-max en secondes)
   timerRanges: {
     rapide:   { facile: [12, 22], moyen: [10, 18], chaud: [8, 15],  torride: [6, 12] },
     pose:     { facile: [18, 32], moyen: [15, 26], chaud: [12, 22], torride: [9, 16] },
@@ -55,7 +54,6 @@ const UI = {
     window.scrollTo(0, 0);
   },
 
-  // ========== SETUP (inchangé dans l’esprit) ==========
   showModeSelection() {
     this.clear();
     this.app.innerHTML = `
@@ -117,9 +115,9 @@ const UI = {
 
   showProps() {
     this.clear();
-    const html = this.availableProps.map(p => `
-      <label class="check-item"><input type="checkbox" value="\( {p}"><span> \){p}</span></label>
-    `).join('');
+    const html = this.availableProps.map(p => 
+      `<label class="check-item"><input type="checkbox" value="\( {p}"><span> \){p}</span></label>`
+    ).join('');
     this.app.innerHTML = `
       <div class="header">
         <h1>Vertige</h1>
@@ -137,9 +135,9 @@ const UI = {
 
   showActs() {
     this.clear();
-    const html = this.availableActs.map(a => `
-      <label class="check-item"><input type="checkbox" value="\( {a}" checked><span> \){a}</span></label>
-    `).join('');
+    const html = this.availableActs.map(a => 
+      `<label class="check-item"><input type="checkbox" value="\( {a}" checked><span> \){a}</span></label>`
+    ).join('');
     this.app.innerHTML = `
       <div class="header">
         <h1>Vertige</h1>
@@ -157,9 +155,9 @@ const UI = {
 
   showClothes() {
     this.clear();
-    const makeList = (list) => list.map(item => `
-      <label class="check-item small"><input type="checkbox" value="\( {item}"><span> \){item}</span></label>
-    `).join('');
+    const makeList = (list) => list.map(item => 
+      `<label class="check-item small"><input type="checkbox" value="\( {item}"><span> \){item}</span></label>`
+    ).join('');
     this.app.innerHTML = `
       <div class="header">
         <h1>Vertige</h1>
@@ -201,10 +199,6 @@ const UI = {
     document.getElementById('btn-start').addEventListener('click', () => this.startGame());
   },
 
-  // ============================================================
-  // MOTEUR DE JEU AVANCÉ
-  // ============================================================
-
   startGame() {
     const targetOrgasms = { rapide: 1, pose: 2, marathon: 3 }[this.state.mode];
 
@@ -217,11 +211,10 @@ const UI = {
         monsieur: [...this.state.clothes.monsieur],
         madame: [...this.state.clothes.madame]
       },
-      activeEffects: [],          // effets qui durent plusieurs tours
+      activeEffects: [],
       orgasms: { monsieur: 0, madame: 0 },
       targetOrgasms,
-      timeoutId: null,
-      phase: 'question'           // question | gage | orgasm
+      timeoutId: null
     };
 
     this.nextTurn();
@@ -253,7 +246,7 @@ const UI = {
 
   getRandomQuestion() {
     const level = this.getHeatLevel();
-    const pool = QUESTIONS[level] || QUESTIONS.facile;
+    const pool = (typeof QUESTIONS !== 'undefined' && QUESTIONS[level]) ? QUESTIONS[level] : [{ type: "open", text: "Décris ce que tu ressens en ce moment." }];
     return pool[Math.floor(Math.random() * pool.length)];
   },
 
@@ -261,16 +254,11 @@ const UI = {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   },
 
-  // ========== TOUR DE QUESTION (timer invisible) ==========
   nextTurn() {
-    // Vérifier si on a atteint les orgasmes
     const totalOrgasms = this.game.orgasms.monsieur + this.game.orgasms.madame;
     if (totalOrgasms >= this.game.targetOrgasms) {
       return this.showVictory();
     }
-
-    // Appliquer les effets actifs
-    this.applyActiveEffects();
 
     this.game.questionsAsked++;
     this.game.currentPlayer = this.game.currentPlayer === 'monsieur' ? 'madame' : 'monsieur';
@@ -309,7 +297,6 @@ const UI = {
       </div>
     `;
 
-    // Timer invisible
     this.game.timeoutId = setTimeout(() => {
       this.game.timeoutId = null;
       this.onFail(player);
@@ -331,7 +318,6 @@ const UI = {
     this.showGage(loser);
   },
 
-  // ========== SYSTÈME DE GAGES INTELLIGENT ==========
   showGage(loser) {
     const winner = loser === 'monsieur' ? 'madame' : 'monsieur';
     const level = this.getHeatLevel();
@@ -366,17 +352,14 @@ const UI = {
         if (el) el.textContent = left + 's';
         if (left <= 0) {
           clearInterval(interval);
-          document.getElementById('btn-gage-done').disabled = false;
+          const btn = document.getElementById('btn-gage-done');
+          if (btn) btn.disabled = false;
         }
       }, 1000);
     }
 
-    // Appliquer les effets du gage
     if (gage.removeClothes) {
       this.removeRandomClothes(gage.removeClothes.who, gage.removeClothes.count);
-    }
-    if (gage.addEffect) {
-      this.game.activeEffects.push(gage.addEffect);
     }
     if (gage.isOrgasm) {
       this.game.orgasms[gage.orgasmFor]++;
@@ -393,9 +376,7 @@ const UI = {
     const props = this.state.props;
     const acts = this.state.acts;
 
-    // --- LOGIQUE DE PROGRESSION ---
     if (level === 'facile') {
-      // Déshabillage + caresses légères
       if (this.game.remainingClothes[loser].length > 0 || this.game.remainingClothes[winner].length > 0) {
         const who = Math.random() < 0.6 ? winner : loser;
         return {
@@ -431,7 +412,6 @@ const UI = {
     }
 
     if (level === 'chaud') {
-      // On commence à autoriser la masturbation et l’oral léger
       if (hasBottomLoser) {
         return {
           text: `${this.state.names[loser]} doit enlever le dernier vêtement du bas et se toucher pendant 40 secondes.`,
@@ -459,7 +439,6 @@ const UI = {
     }
 
     // TORRIDE
-    // Ici on peut viser les orgasmes
     const totalOrgasms = this.game.orgasms.monsieur + this.game.orgasms.madame;
     if (totalOrgasms < this.game.targetOrgasms && Math.random() < 0.55) {
       return {
@@ -482,13 +461,6 @@ const UI = {
       isOrgasm: true,
       orgasmFor: winner
     };
-  },
-
-  applyActiveEffects() {
-    // Pour l’instant simple : on décrémente les tours restants
-    this.game.activeEffects = this.game.activeEffects
-      .map(e => ({ ...e, turnsLeft: e.turnsLeft - 1 }))
-      .filter(e => e.turnsLeft > 0);
   },
 
   showVictory() {
