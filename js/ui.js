@@ -317,32 +317,65 @@ const UI = {
       this.renderStatusBar();
 
     var self = this;
+    this.game.paused = false;
+    this.game.turnActive = true;
+    this.game.remainingTime = duration;
+    this.game.turnStart = Date.now();
+
+    // Timer principal
     this.game.timeoutId = setTimeout(function() {
-      if (!self.game.paused) {
+      if (self.game.turnActive && !self.game.paused) {
         self.game.timeoutId = null;
+        self.game.turnActive = false;
         self.onFail(player);
       }
     }, duration * 1000);
 
+    // Bouton BUZZ
     document.getElementById('btn-buzz').addEventListener('click', function() {
-      if (self.game.timeoutId && !self.game.paused) {
+      if (!self.game.turnActive || self.game.paused) return;
+
+      // On annule le timer
+      if (self.game.timeoutId) {
         clearTimeout(self.game.timeoutId);
         self.game.timeoutId = null;
-        self.game.intensity = Math.min(6, self.game.intensity + (force ? 0.2 : 0.1));
-        self.nextTurn();
       }
+      self.game.turnActive = false;
+      self.game.intensity = Math.min(6, self.game.intensity + (force ? 0.2 : 0.1));
+      self.nextTurn();
     });
 
+    // Bouton Pause / Reprendre
     document.getElementById('btn-pause').addEventListener('click', function() {
-      self.game.paused = !self.game.paused;
       var btn = document.getElementById('btn-pause');
-      if (btn) btn.textContent = self.game.paused ? 'Reprendre' : 'Pause';
 
-      if (self.game.paused) {
+      if (!self.game.paused) {
+        // === Mettre en pause ===
+        self.game.paused = true;
+        btn.textContent = 'Reprendre';
+
+        // Calculer le temps restant
+        var elapsed = (Date.now() - self.game.turnStart) / 1000;
+        self.game.remainingTime = Math.max(3, self.game.remainingTime - elapsed);
+
         if (self.game.timeoutId) {
           clearTimeout(self.game.timeoutId);
           self.game.timeoutId = null;
         }
+      } else {
+        // === Reprendre ===
+        self.game.paused = false;
+        btn.textContent = 'Pause';
+        self.game.turnStart = Date.now();
+
+        // Relancer le timer avec le temps restant
+        self.game.timeoutId = setTimeout(function() {
+          if (self.game.turnActive && !self.game.paused) {
+            self.game.timeoutId = null;
+            self.game.turnActive = false;
+            self.onFail(player);
+          }
+        }, self.game.remainingTime * 1000);
       }
     });
   },
