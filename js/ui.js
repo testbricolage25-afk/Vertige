@@ -32,10 +32,10 @@ const UI = {
     'Cheveux attachés', 'Chaussettes', 'Chaussures', 'Collant'
   ],
 
-diceBody: {
-    soft: ['lèvres', 'cou', 'oreilles', 'seins', 'ventre', 'intérieur des cuisses'],
+  diceBody: {
+    soft: ['lèvres', 'cou', 'seins', 'ventre', 'intérieur des cuisses', 'fesses'],
     medium: ['seins', 'fesses', 'sexe', 'clitoris', 'gland', 'boules'],
-    hard: ['sexe', 'clitoris', 'gland', 'boules', 'anus', 'entrée', 'gorge']
+    hard: ['sexe', 'clitoris', 'gland', 'boules', 'anus', 'gorge']
   },
   diceAction: {
     soft: ['embrasser langoureusement', 'lécher lentement', 'caresser avec les doigts', 'sucer doucement'],
@@ -60,17 +60,13 @@ diceBody: {
   // ========== SETUP ==========
   showNames: function() {
     this.clear();
-    this.app.innerHTML = '' +
+    this.app.innerHTML =
       '<div class="header"><h1>Vertige</h1><p>Vos prénoms pour ce soir</p></div>' +
       '<div class="form-container">' +
-        '<div class="input-group">' +
-          '<label>Monsieur</label>' +
-          '<input type="text" id="name-monsieur" placeholder="Son prénom" autocomplete="off">' +
-        '</div>' +
-        '<div class="input-group">' +
-          '<label>Madame</label>' +
-          '<input type="text" id="name-madame" placeholder="Son prénom" autocomplete="off">' +
-        '</div>' +
+        '<div class="input-group"><label>Monsieur</label>' +
+        '<input type="text" id="name-monsieur" placeholder="Son prénom" autocomplete="off"></div>' +
+        '<div class="input-group"><label>Madame</label>' +
+        '<input type="text" id="name-madame" placeholder="Son prénom" autocomplete="off"></div>' +
         '<button class="btn btn-primary mt" id="btn-names">Continuer</button>' +
       '</div>';
 
@@ -78,10 +74,7 @@ diceBody: {
     document.getElementById('btn-names').addEventListener('click', function() {
       var m = document.getElementById('name-monsieur').value.trim();
       var f = document.getElementById('name-madame').value.trim();
-      if (!m || !f) {
-        alert('Les deux prénoms sont nécessaires.');
-        return;
-      }
+      if (!m || !f) { alert('Les deux prénoms sont nécessaires.'); return; }
       self.state.names.monsieur = m;
       self.state.names.madame = f;
       self.showProps();
@@ -92,15 +85,11 @@ diceBody: {
     this.clear();
     var html = '';
     for (var i = 0; i < this.availableProps.length; i++) {
-      var p = this.availableProps[i];
-      html += '<label class="check-item"><input type="checkbox" value="' + p + '"><span>' + p + '</span></label>';
+      html += '<label class="check-item"><input type="checkbox" value="' + this.availableProps[i] + '"><span>' + this.availableProps[i] + '</span></label>';
     }
-    this.app.innerHTML = '' +
-      '<div class="header">' +
-        '<h1>Vertige</h1>' +
-        '<p>Ce que vous avez à disposition</p>' +
-        '<span class="small">Cochez uniquement ce qui est réellement à portée de main.</span>' +
-      '</div>' +
+    this.app.innerHTML =
+      '<div class="header"><h1>Vertige</h1><p>Ce que vous avez à disposition</p>' +
+      '<span class="small">Cochez uniquement ce qui est réellement à portée de main.</span></div>' +
       '<div class="check-list">' + html + '</div>' +
       '<button class="btn btn-primary" id="btn-props">Continuer</button>';
 
@@ -108,9 +97,7 @@ diceBody: {
     document.getElementById('btn-props').addEventListener('click', function() {
       var checked = document.querySelectorAll('.check-list input:checked');
       self.state.props = [];
-      for (var i = 0; i < checked.length; i++) {
-        self.state.props.push(checked[i].value);
-      }
+      for (var i = 0; i < checked.length; i++) self.state.props.push(checked[i].value);
       self.showActs();
     });
   },
@@ -119,15 +106,11 @@ diceBody: {
     this.clear();
     var html = '';
     for (var i = 0; i < this.availableActs.length; i++) {
-      var a = this.availableActs[i];
-      html += '<label class="check-item"><input type="checkbox" value="' + a + '" checked><span>' + a + '</span></label>';
+      html += '<label class="check-item"><input type="checkbox" value="' + this.availableActs[i] + '" checked><span>' + this.availableActs[i] + '</span></label>';
     }
-    this.app.innerHTML = '' +
-      '<div class="header">' +
-        '<h1>Vertige</h1>' +
-        '<p>Ce qui est autorisé ce soir</p>' +
-        '<span class="small">Retirez seulement ce que vous refusez clairement.</span>' +
-      '</div>' +
+    this.app.innerHTML =
+      '<div class="header"><h1>Vertige</h1><p>Ce qui est autorisé ce soir</p>' +
+      '<span class="small">Retirez seulement ce que vous refusez clairement.</span></div>' +
       '<div class="check-list">' + html + '</div>' +
       '<button class="btn btn-primary" id="btn-acts">Continuer</button>';
 
@@ -135,9 +118,7 @@ diceBody: {
     document.getElementById('btn-acts').addEventListener('click', function() {
       var checked = document.querySelectorAll('.check-list input:checked');
       self.state.acts = [];
-      for (var i = 0; i < checked.length; i++) {
-        self.state.acts.push(checked[i].value);
-      }
+      for (var i = 0; i < checked.length; i++) self.state.acts.push(checked[i].value);
       self.showClothes();
     });
   },
@@ -145,7 +126,6 @@ diceBody: {
   showClothes: function() {
     this.clear();
     var self = this;
-
     function makeList(list) {
       var html = '';
       for (var i = 0; i < list.length; i++) {
@@ -153,39 +133,28 @@ diceBody: {
       }
       return html;
     }
-
-    this.app.innerHTML = '' +
-      '<div class="header">' +
-        '<h1>Vertige</h1>' +
-        '<p>Votre tenue actuelle</p>' +
-        '<span class="small">Le jeu s’en servira.</span>' +
-      '</div>' +
+    this.app.innerHTML =
+      '<div class="header"><h1>Vertige</h1><p>Votre tenue actuelle</p><span class="small">Le jeu s’en servira.</span></div>' +
       '<div class="clothes-grid">' +
-        '<div>' +
-          '<h3>' + this.state.names.monsieur + '</h3>' +
-          '<div class="check-list" id="clothes-m">' + makeList(this.clothesMonsieur) + '</div>' +
-        '</div>' +
-        '<div>' +
-          '<h3>' + this.state.names.madame + '</h3>' +
-          '<div class="check-list" id="clothes-f">' + makeList(this.clothesMadame) + '</div>' +
-        '</div>' +
+        '<div><h3>' + this.state.names.monsieur + '</h3><div class="check-list" id="clothes-m">' + makeList(this.clothesMonsieur) + '</div></div>' +
+        '<div><h3>' + this.state.names.madame + '</h3><div class="check-list" id="clothes-f">' + makeList(this.clothesMadame) + '</div></div>' +
       '</div>' +
       '<button class="btn btn-primary" id="btn-clothes">Continuer</button>';
 
     document.getElementById('btn-clothes').addEventListener('click', function() {
-      var mChecked = document.querySelectorAll('#clothes-m input:checked');
-      var fChecked = document.querySelectorAll('#clothes-f input:checked');
+      var mC = document.querySelectorAll('#clothes-m input:checked');
+      var fC = document.querySelectorAll('#clothes-f input:checked');
       self.state.clothes.monsieur = [];
       self.state.clothes.madame = [];
-      for (var i = 0; i < mChecked.length; i++) self.state.clothes.monsieur.push(mChecked[i].value);
-      for (var i = 0; i < fChecked.length; i++) self.state.clothes.madame.push(fChecked[i].value);
+      for (var i = 0; i < mC.length; i++) self.state.clothes.monsieur.push(mC[i].value);
+      for (var i = 0; i < fC.length; i++) self.state.clothes.madame.push(fC[i].value);
       self.showPromise();
     });
   },
 
   showPromise: function() {
     this.clear();
-    this.app.innerHTML = '' +
+    this.app.innerHTML =
       '<div class="header"><h1>Vertige</h1><p>Le seuil</p></div>' +
       '<div class="promise">' +
         '<p>' + this.state.names.monsieur + ' et ' + this.state.names.madame + '.</p>' +
@@ -223,15 +192,17 @@ diceBody: {
         madame: this.state.clothes.madame.slice()
       },
       gagesCount: { monsieur: 0, madame: 0 },
+      totalGages: 0,
       orgasmsDone: 0,
       orgasmPlan: plan,
       recoveryTurns: 0,
       ongoingGage: null,
+      streak: { monsieur: 0, madame: 0 },
+      lastSuccess: null,
       paused: false,
+      turnActive: false,
       timeoutId: null,
-      startTime: Date.now(),
-      successStreak: 0,          // réussites d'affilée
-      lastQuestions: []         // pour éviter les répétitions immédiates
+      startTime: Date.now()
     };
 
     this.nextTurn();
@@ -241,14 +212,12 @@ diceBody: {
     var m = this.game.remainingClothes.monsieur;
     var f = this.game.remainingClothes.madame;
     var pct = Math.min(100, Math.round(this.game.intensity * 16.6));
-
     var mClothes = m.length ? m.slice(0, 3).join(', ') + (m.length > 3 ? '…' : '') : 'Nu';
     var fClothes = f.length ? f.slice(0, 3).join(', ') + (f.length > 3 ? '…' : '') : 'Nue';
 
     var dots = '';
     for (var i = 1; i <= 3; i++) {
-      var cls = i <= this.game.orgasmsDone ? 'ejac-dot done' : 'ejac-dot';
-      dots += '<span class="' + cls + '">' + i + '</span>';
+      dots += '<span class="ejac-dot' + (i <= this.game.orgasmsDone ? ' done' : '') + '">' + i + '</span>';
     }
 
     return '' +
@@ -272,13 +241,12 @@ diceBody: {
 
   getTimer: function(q) {
     var base = q.timer || [14, 22];
-    var min = base[0];
-    var max = base[1];
+    var min = base[0], max = base[1];
     var minutes = (Date.now() - this.game.startTime) / 60000;
 
-    if (minutes > 35) { min = Math.max(9, min - 2); max = Math.max(15, max - 3); }
-    if (minutes > 70) { min = Math.max(8, min - 2); max = Math.max(13, max - 3); }
-    if (this.game.intensity >= 3.8) { min = Math.max(7, min - 2); max = Math.max(12, max - 2); }
+    if (minutes > 40) { min = Math.max(9, min - 2); max = Math.max(15, max - 3); }
+    if (minutes > 80) { min = Math.max(8, min - 2); max = Math.max(13, max - 3); }
+    if (this.game.intensity >= 4) { min = Math.max(7, min - 1); max = Math.max(12, max - 2); }
     if (this.game.recoveryTurns > 0) { min += 6; max += 8; }
 
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -295,83 +263,33 @@ diceBody: {
     var player = this.game.currentPlayer;
     var name = this.state.names[player];
 
-    var force = this.game.intensity >= 3.8 && Math.random() < 0.25;
-    var q = this.getRandomQuestion(force);
-    var duration = this.getTimer(q);
-
-    this.clear();
-
-    var ongoing = this.game.ongoingGage ? '<div class="ongoing">' + this.game.ongoingGage + '</div>' : '';
-
-    this.app.innerHTML = '' +
-      ongoing +
-      '<div class="player-turn">À toi <strong>' + name + '</strong></div>' +
-      '<div class="question-card">' +
-        '<p class="question-text">' + q.text + '</p>' +
-        (q.type === 'list' ? '<p class="question-hint">Au moins ' + q.count + ' réponses</p>' : '') +
-        (q.type === 'fetch' ? '<p class="question-hint">Tu peux te lever</p>' : '') +
-      '</div>' +
-      '<div class="buzz-zone">' +
-        '<p class="buzz-hint">' + (force ? 'PRESSION • Réponds vite' : 'Réponds puis buzz') + '</p>' +
-        '<button class="btn btn-primary btn-buzz" id="btn-buzz">BUZZ</button>' +
-        '<button class="btn btn-dice" id="btn-dice">Lancer les dés</button>' +
-        '<button class="btn btn-pause" id="btn-pause">Pause</button>' +
-      '</div>' +
-      this.renderStatusBar();
-
-    var self = this;
-    this.game.paused = false;
-    this.game.turnActive = true;
-    this.game.remainingTime = duration;
-    this.game.turnStart = Date.now();
-
-    // Mini-jeux spéciaux
-    if (q.type === 'rps') {
-      this.showRPS(player);
-      return;
-    }
-    
-    // Timer principal
-    this.game.timeoutId = setTimeout(function() {
-      if (self.game.turnActive && !self.game.paused) {
-        self.game.timeoutId = null;
-        self.game.turnActive = false;
-        self.onFail(player);
-      }
-    }, duration * 1000);
-
-    // Bouton BUZZ
-    document.getElementById('btn-buzz').addEventListener('click', function() {
-      if (!self.game.turnActive || self.game.paused) return;
-
-      // On annule le timer
-      if (self.game.timeoutId) {
-nextTurn: function() {
-    if (this.game.orgasmsDone >= 3) {
-      this.showVictory();
-      return;
-    }
-    if (this.game.recoveryTurns > 0) this.game.recoveryTurns--;
-
-    this.game.currentPlayer = this.game.currentPlayer === 'monsieur' ? 'madame' : 'monsieur';
-    var player = this.game.currentPlayer;
-    var name = this.state.names[player];
-
-    // 8% de chance d'avoir un événement "Lancer les dés"
-    if (Math.random() < 0.08) {
+    // Événements aléatoires (après un minimum d'intensité)
+    var eventRoll = Math.random();
+    if (this.game.intensity > 1.0 && eventRoll < 0.07) {
       this.showDiceEvent(player);
       return;
     }
+    if (this.game.intensity > 1.4 && eventRoll < 0.12) {
+      this.showBoardGameEvent(player);
+      return;
+    }
+    if (this.game.intensity > 1.8 && eventRoll < 0.16) {
+      this.showRPS(player);
+      return;
+    }
+    if (this.game.intensity > 2.2 && eventRoll < 0.19) {
+      this.showDiceDuel(player);
+      return;
+    }
 
-    var force = this.game.intensity >= 4.0 && Math.random() < 0.22;
+    var force = this.game.intensity >= 4.0 && Math.random() < 0.20;
     var q = this.getRandomQuestion(force);
     var duration = this.getTimer(q);
 
     this.clear();
-
     var ongoing = this.game.ongoingGage ? '<div class="ongoing">' + this.game.ongoingGage + '</div>' : '';
 
-    this.app.innerHTML = '' +
+    this.app.innerHTML =
       ongoing +
       '<div class="player-turn">À toi <strong>' + name + '</strong></div>' +
       '<div class="question-card">' +
@@ -401,35 +319,37 @@ nextTurn: function() {
       }
     }, duration * 1000);
 
-    // BUZZ = réussite
     document.getElementById('btn-buzz').addEventListener('click', function() {
       if (!self.game.turnActive || self.game.paused) return;
-
       if (self.game.timeoutId) {
         clearTimeout(self.game.timeoutId);
         self.game.timeoutId = null;
       }
       self.game.turnActive = false;
 
-      // Intensité monte très lentement
-      self.game.intensity = Math.min(6, self.game.intensity + (force ? 0.12 : 0.06));
+      // Progression très lente sur les succès
+      self.game.intensity = Math.min(6, self.game.intensity + (force ? 0.06 : 0.035));
 
-      // Série de réussites
-      self.game.successStreak++;
-      if (self.game.successStreak >= 3) {
-        self.game.successStreak = 0;
-        // L'adversaire prend un gage
-        var opponent = player === 'monsieur' ? 'madame' : 'monsieur';
-        self.game.gagesCount[opponent]++;
-        self.showForcedGage(opponent);
+      // Streak
+      if (self.game.lastSuccess === player) {
+        self.game.streak[player]++;
+      } else {
+        self.game.streak[player] = 1;
+        self.game.streak[player === 'monsieur' ? 'madame' : 'monsieur'] = 0;
+      }
+      self.game.lastSuccess = player;
+
+      // 3 victoires d'affilée → l'autre prend un gage
+      if (self.game.streak[player] >= 3) {
+        self.game.streak[player] = 0;
+        var other = player === 'monsieur' ? 'madame' : 'monsieur';
+        self.showGage(other);
         return;
       }
 
       self.nextTurn();
     });
 
-  
-    // Pause
     document.getElementById('btn-pause').addEventListener('click', function() {
       var btn = document.getElementById('btn-pause');
       if (!self.game.paused) {
@@ -458,230 +378,33 @@ nextTurn: function() {
 
   onFail: function(loser) {
     this.game.gagesCount[loser]++;
-    this.game.intensity = Math.min(6, this.game.intensity + 0.28); // moins violent qu'avant
-    this.game.successStreak = 0;
+    this.game.totalGages++;
+    this.game.intensity = Math.min(6, this.game.intensity + 0.18);
+    this.game.streak.monsieur = 0;
+    this.game.streak.madame = 0;
+    this.game.lastSuccess = null;
     this.game.ongoingGage = null;
     this.showGage(loser);
   },
 
-        showDiceEvent: function(player) {
-    var self = this;
-    var loser = player;
-    var winner = player === 'monsieur' ? 'madame' : 'monsieur';
-
-    this.clear();
-    this.app.innerHTML = '' +
-      '<div class="player-turn">Événement</div>' +
-      '<div class="gage-card">' +
-        '<div class="gage-label">Lancer les dés</div>' +
-        '<p class="gage-text" id="dice-text">Appuie pour lancer les dés</p>' +
-      '</div>' +
-      '<button class="btn btn-primary" id="btn-roll">Lancer les dés</button>' +
-      '<button class="btn btn-primary" id="btn-dice-done" style="display:none">Action terminée</button>' +
-      this.renderStatusBar();
-
-    document.getElementById('btn-roll').addEventListener('click', function() {
-      var intensity = self.game.intensity;
-      var bodyP, actP;
-
-      if (intensity < 2.2) {
-        bodyP = self.diceBody.soft;
-        actP = self.diceAction.soft;
-      } else if (intensity < 4.0) {
-        bodyP = self.diceBody.medium;
-        actP = self.diceAction.medium;
-      } else {
-        bodyP = self.diceBody.hard;
-        actP = self.diceAction.hard;
-      }
-
-      var body = bodyP[Math.floor(Math.random() * bodyP.length)];
-      var act = actP[Math.floor(Math.random() * actP.length)];
-
-      var text = self.state.names[loser] + ' doit ' + act + ' ' + body + ' de ' + self.state.names[winner] + ' pendant 50 secondes.';
-
-      document.getElementById('dice-text').textContent = text;
-      document.getElementById('btn-roll').style.display = 'none';
-      document.getElementById('btn-dice-done').style.display = 'block';
-    });
-
-    document.getElementById('btn-dice-done').addEventListener('click', function() {
-      self.game.gagesCount[loser]++;
-      self.game.intensity = Math.min(6, self.game.intensity + 0.15);
-      self.game.successStreak = 0;
-      self.nextTurn();
-    });
-  },
-        showForcedGage: function(loser) {
-    var winner = loser === 'monsieur' ? 'madame' : 'monsieur';
-    var self = this;
-
-    var raw = this.pickSmartGage(loser, this.game.intensity);
-    var text = this.fill(raw, loser, winner);
-
-    this.clear();
-    this.app.innerHTML = '' +
-      '<div class="gage-card">' +
-        '<div class="gage-label">Gage (série de 3)</div>' +
-        '<p class="gage-text">' + text + '</p>' +
-      '</div>' +
-      '<button class="btn btn-primary" id="btn-forced-done">Gage terminé</button>' +
-      this.renderStatusBar();
-
-    document.getElementById('btn-forced-done').addEventListener('click', function() {
-      self.game.intensity = Math.min(6, self.game.intensity + 0.18);
-      self.nextTurn();
-    });
-  },
-        
-  showDiceGage: function(loser) {
-    var winner = loser === 'monsieur' ? 'madame' : 'monsieur';
-    var intensity = this.game.intensity;
-    var self = this;
-
-    this.clear();
-
-    this.app.innerHTML = '' +
-      '<div class="gage-card">' +
-        '<div class="gage-label">DÉS</div>' +
-        '<p class="gage-text" id="dice-result">Appuie pour lancer...</p>' +
-      '</div>' +
-      '<button class="btn btn-primary" id="btn-roll">Lancer les dés</button>' +
-      '<button class="btn btn-primary" id="btn-dice-done" style="display:none">Gage terminé</button>' +
-      this.renderStatusBar();
-
-    document.getElementById('btn-roll').addEventListener('click', function() {
-      var bodyP, actP;
-      if (intensity < 2.5) {
-        bodyP = self.diceBody.soft;
-        actP = self.diceAction.soft;
-      } else if (intensity < 4.2) {
-        bodyP = self.diceBody.medium;
-        actP = self.diceAction.medium;
-      } else {
-        bodyP = self.diceBody.hard;
-        actP = self.diceAction.hard;
-      }
-
-      var body = bodyP[Math.floor(Math.random() * bodyP.length)];
-      var act = actP[Math.floor(Math.random() * actP.length)];
-
-      var text = self.state.names[loser] + ' doit ' + act + ' ' + body + ' de ' + self.state.names[winner] + ' pendant 60 secondes.';
-
-      document.getElementById('dice-result').textContent = text;
-      document.getElementById('btn-roll').style.display = 'none';
-      document.getElementById('btn-dice-done').style.display = 'block';
-    });
-
-    document.getElementById('btn-dice-done').addEventListener('click', function() {
-      self.game.gagesCount[loser]++;
-      self.game.intensity = Math.min(6, self.game.intensity + 0.25);
-      self.nextTurn();
-    });
-  },
-
-  showRPS: function(player) {
-    var self = this;
-    var score = { monsieur: 0, madame: 0 };
-    var round = 1;
-
-    function render() {
-      self.clear();
-      self.app.innerHTML = '' +
-        '<div class="header"><h1>Pierre • Feuille • Ciseaux</h1><p>Manche ' + round + ' / Premier à 3</p></div>' +
-        '<div class="rps-score">' +
-          self.state.names.monsieur + ' : ' + score.monsieur + ' — ' +
-          self.state.names.madame + ' : ' + score.madame +
-        '</div>' +
-        '<div class="rps-buttons">' +
-          '<button class="btn btn-primary rps-btn" data-choice="pierre">Pierre</button>' +
-          '<button class="btn btn-primary rps-btn" data-choice="feuille">Feuille</button>' +
-          '<button class="btn btn-primary rps-btn" data-choice="ciseaux">Ciseaux</button>' +
-        '</div>' +
-        self.renderStatusBar();
-
-      var buttons = document.querySelectorAll('.rps-btn');
-      for (var i = 0; i < buttons.length; i++) {
-        buttons[i].addEventListener('click', function() {
-          var playerChoice = this.getAttribute('data-choice');
-          var choices = ['pierre', 'feuille', 'ciseaux'];
-          var otherChoice = choices[Math.floor(Math.random() * 3)];
-
-          var winner = null;
-          if (playerChoice === otherChoice) {
-            // égalité
-          } else if (
-            (playerChoice === 'pierre' && otherChoice === 'ciseaux') ||
-            (playerChoice === 'feuille' && otherChoice === 'pierre') ||
-            (playerChoice === 'ciseaux' && otherChoice === 'feuille')
-          ) {
-            winner = player;
-          } else {
-            winner = player === 'monsieur' ? 'madame' : 'monsieur';
-          }
-
-          if (winner) score[winner]++;
-
-          if (score.monsieur >= 3 || score.madame >= 3) {
-            var dominator = score.monsieur >= 3 ? 'monsieur' : 'madame';
-            var dominated = dominator === 'monsieur' ? 'madame' : 'monsieur';
-            self.showRPSResult(dominator, dominated);
-          } else {
-            round++;
-            render();
-          }
-        });
-      }
-    }
-
-    render();
-  },
-
-  showRPSResult: function(dominator, dominated) {
-    var self = this;
-    var text = this.state.names[dominator] + ' a gagné.\n' +
-               this.state.names[dominator] + ' domine ' + this.state.names[dominated] + '.\n\n' +
-               'Fellation / Cunnilingus ou pénétration (position au choix du gagnant) pendant 90 secondes.';
-
-    this.clear();
-    this.app.innerHTML = '' +
-      '<div class="gage-card">' +
-        '<div class="gage-label">DOMINATION</div>' +
-        '<p class="gage-text">' + text.replace(/\n/g, '<br>') + '</p>' +
-      '</div>' +
-      '<button class="btn btn-primary" id="btn-rps-done">Terminé</button>' +
-      this.renderStatusBar();
-
-    document.getElementById('btn-rps-done').addEventListener('click', function() {
-      self.game.gagesCount[dominated]++;
-      self.game.intensity = Math.min(6, self.game.intensity + 0.35);
-      self.nextTurn();
-    });
-  },
-  
+  // ========== GAGES ==========
   showGage: function(loser) {
     var winner = loser === 'monsieur' ? 'madame' : 'monsieur';
     var intensity = this.game.intensity;
     var self = this;
+    var totalG = this.game.totalGages;
 
+    // Éjaculation uniquement si assez de gages sont passés
     var shouldOrgasm = false;
-    // Beaucoup plus rare et plus tardif
-    if (this.game.orgasmsDone === 0 && intensity >= 3.6 && Math.random() < 0.28) shouldOrgasm = true;
-    if (this.game.orgasmsDone === 1 && intensity >= 4.6 && Math.random() < 0.32) shouldOrgasm = true;
-    if (this.game.orgasmsDone === 2 && intensity >= 5.3 && Math.random() < 0.38) shouldOrgasm = true;
-    
-    var isDice = !shouldOrgasm && Math.random() < 0.13;
-    var text = '';
-    var isOrgasm = false;
-    var isOngoing = false;
-    var duration = null;
+    if (this.game.orgasmsDone === 0 && totalG >= 6 && intensity >= 3.4 && Math.random() < 0.38) shouldOrgasm = true;
+    if (this.game.orgasmsDone === 1 && totalG >= 12 && intensity >= 4.4 && Math.random() < 0.42) shouldOrgasm = true;
+    if (this.game.orgasmsDone === 2 && totalG >= 18 && intensity >= 5.2 && Math.random() < 0.48) shouldOrgasm = true;
+
+    var text = '', isOrgasm = false, isOngoing = false, duration = null;
 
     if (shouldOrgasm) {
       text = this.fill(this.pickOrgasm(), loser, winner);
       isOrgasm = true;
-    } else if (isDice) {
-      text = this.createDiceGage(loser, winner, intensity);
-      duration = 60;
     } else if (this.game.recoveryTurns > 0) {
       text = this.fill(this.pickFrom(GAGES.recovery), loser, winner);
       duration = 50;
@@ -693,13 +416,12 @@ nextTurn: function() {
     }
 
     this.clear();
-
     var readyBtn = duration ? '<button class="btn btn-primary" id="btn-ready">Je suis prêt(e) — Lancer le chrono</button>' : '';
     var doneLabel = isOrgasm ? 'Éjaculation terminée' : 'Gage terminé';
 
-    this.app.innerHTML = '' +
+    this.app.innerHTML =
       '<div class="gage-card">' +
-        '<div class="gage-label">' + (isOrgasm ? 'ÉJACULATION' : (isDice ? 'DÉS' : 'Gage')) + '</div>' +
+        '<div class="gage-label">' + (isOrgasm ? 'ÉJACULATION' : 'Gage') + '</div>' +
         '<p class="gage-text">' + text + '</p>' +
         '<div id="timer-box"></div>' +
       '</div>' +
@@ -730,7 +452,7 @@ nextTurn: function() {
     if (isOrgasm) {
       this.game.orgasmsDone++;
       this.game.recoveryTurns = 5;
-      this.game.intensity = Math.max(2.2, this.game.intensity - 1.5);
+      this.game.intensity = Math.max(2.0, this.game.intensity - 1.4);
     }
 
     document.getElementById('btn-done').addEventListener('click', function() {
@@ -738,30 +460,182 @@ nextTurn: function() {
     });
   },
 
-  createDiceGage: function(loser, winner, intensity) {
-    var bodyP, actP;
-    if (intensity < 2.5) {
-      bodyP = this.diceBody.soft;
-      actP = this.diceAction.soft;
-    } else if (intensity < 4.2) {
-      bodyP = this.diceBody.medium;
-      actP = this.diceAction.medium;
-    } else {
-      bodyP = this.diceBody.hard;
-      actP = this.diceAction.hard;
-    }
-    var body = bodyP[Math.floor(Math.random() * bodyP.length)];
-    var act = actP[Math.floor(Math.random() * actP.length)];
-    return this.state.names[loser] + ' doit ' + act + ' ' + body + ' de ' + this.state.names[winner] + ' pendant 60 secondes.';
+  // ========== ÉVÉNEMENTS ==========
+  showDiceEvent: function(player) {
+    var self = this;
+    var other = player === 'monsieur' ? 'madame' : 'monsieur';
+
+    this.clear();
+    this.app.innerHTML =
+      '<div class="player-turn">Événement</div>' +
+      '<div class="question-card"><p class="question-text">Lancer les dés</p><p class="question-hint">Appuie pour lancer</p></div>' +
+      '<button class="btn btn-primary" id="btn-roll">Lancer les dés</button>' +
+      this.renderStatusBar();
+
+    document.getElementById('btn-roll').addEventListener('click', function() {
+      var intensity = self.game.intensity;
+      var bodyP = intensity < 2.5 ? self.diceBody.soft : (intensity < 4.2 ? self.diceBody.medium : self.diceBody.hard);
+      var actP = intensity < 2.5 ? self.diceAction.soft : (intensity < 4.2 ? self.diceAction.medium : self.diceAction.hard);
+      var body = bodyP[Math.floor(Math.random() * bodyP.length)];
+      var act = actP[Math.floor(Math.random() * actP.length)];
+      var text = self.state.names[player] + ' doit ' + act + ' ' + body + ' de ' + self.state.names[other] + ' pendant 50 secondes.';
+
+      self.clear();
+      self.app.innerHTML =
+        '<div class="gage-card"><div class="gage-label">DÉS</div><p class="gage-text">' + text + '</p></div>' +
+        '<button class="btn btn-primary" id="btn-dice-done">Gage terminé</button>' +
+        self.renderStatusBar();
+
+      document.getElementById('btn-dice-done').addEventListener('click', function() {
+        self.game.gagesCount[player]++;
+        self.game.totalGages++;
+        self.game.intensity = Math.min(6, self.game.intensity + 0.12);
+        self.nextTurn();
+      });
+    });
   },
 
+  showBoardGameEvent: function(player) {
+    var self = this;
+    var games = ['Uno', 'Skyjo', 'Puissance 4', 'un jeu de cartes', 'un jeu de société'];
+    var gameName = games[Math.floor(Math.random() * games.length)];
+
+    this.clear();
+    this.app.innerHTML =
+      '<div class="player-turn">Événement</div>' +
+      '<div class="question-card"><p class="question-text">Faites une partie de ' + gameName + '</p>' +
+      '<p class="question-hint">Quand c’est fini, indiquez qui a gagné</p></div>' +
+      '<button class="btn btn-primary" id="btn-win-m">' + this.state.names.monsieur + ' a gagné</button>' +
+      '<button class="btn btn-primary" id="btn-win-f" style="margin-top:0.6rem">' + this.state.names.madame + ' a gagné</button>' +
+      this.renderStatusBar();
+
+    function finish(winner) {
+      var loser = winner === 'monsieur' ? 'madame' : 'monsieur';
+      self.showGage(loser);
+    }
+
+    document.getElementById('btn-win-m').addEventListener('click', function() { finish('monsieur'); });
+    document.getElementById('btn-win-f').addEventListener('click', function() { finish('madame'); });
+  },
+
+  showRPS: function(player) {
+    var self = this;
+    var score = { monsieur: 0, madame: 0 };
+    var round = 1;
+
+    function render() {
+      self.clear();
+      self.app.innerHTML =
+        '<div class="header"><h1>Pierre • Feuille • Ciseaux</h1><p>Manche ' + round + ' — Premier à 3</p></div>' +
+        '<div class="rps-score">' + self.state.names.monsieur + ' ' + score.monsieur + ' — ' + score.madame + ' ' + self.state.names.madame + '</div>' +
+        '<div class="rps-buttons">' +
+          '<button class="btn btn-primary rps-btn" data-choice="pierre">Pierre</button>' +
+          '<button class="btn btn-primary rps-btn" data-choice="feuille">Feuille</button>' +
+          '<button class="btn btn-primary rps-btn" data-choice="ciseaux">Ciseaux</button>' +
+        '</div>' +
+        self.renderStatusBar();
+
+      var btns = document.querySelectorAll('.rps-btn');
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener('click', function() {
+          var pChoice = this.getAttribute('data-choice');
+          var choices = ['pierre', 'feuille', 'ciseaux'];
+          var oChoice = choices[Math.floor(Math.random() * 3)];
+          var winner = null;
+
+          if (pChoice !== oChoice) {
+            if ((pChoice === 'pierre' && oChoice === 'ciseaux') ||
+                (pChoice === 'feuille' && oChoice === 'pierre') ||
+                (pChoice === 'ciseaux' && oChoice === 'feuille')) {
+              winner = player;
+            } else {
+              winner = player === 'monsieur' ? 'madame' : 'monsieur';
+            }
+          }
+
+          if (winner) score[winner]++;
+
+          if (score.monsieur >= 3 || score.madame >= 3) {
+            var loser = score.monsieur >= 3 ? 'madame' : 'monsieur';
+            self.showGage(loser);
+          } else {
+            round++;
+            render();
+          }
+        });
+      }
+    }
+    render();
+  },
+
+  showDiceDuel: function(player) {
+    var self = this;
+    var round = 1;
+    var maxRound = 3;
+
+    function playRound() {
+      self.clear();
+      self.app.innerHTML =
+        '<div class="player-turn">Duel de dés — Round ' + round + '/' + maxRound + '</div>' +
+        '<div class="question-card"><p class="question-text">Lancez chacun un dé</p><p class="question-hint">Le plus haut chiffre gagne</p></div>' +
+        '<button class="btn btn-primary" id="btn-roll-duel">Lancer les dés</button>' +
+        self.renderStatusBar();
+
+      document.getElementById('btn-roll-duel').addEventListener('click', function() {
+        var d1 = Math.floor(Math.random() * 6) + 1;
+        var d2 = Math.floor(Math.random() * 6) + 1;
+        var loser;
+
+        if (d1 === d2) {
+          // égalité → on relance
+          playRound();
+          return;
+        }
+
+        // Pour simplifier : le joueur actuel est d1
+        loser = d1 > d2 ? (player === 'monsieur' ? 'madame' : 'monsieur') : player;
+
+        var level = round === 1 ? 'soft' : (round === 2 ? 'medium' : 'hard');
+        var text = '';
+
+        if (level === 'soft') {
+          text = self.state.names[loser] + ' doit embrasser et caresser ' + self.state.names[loser === 'monsieur' ? 'madame' : 'monsieur'] + ' pendant 40 secondes.';
+        } else if (level === 'medium') {
+          text = self.state.names[loser] + ' doit faire une fellation / un cunnilingus lent pendant 60 secondes.';
+        } else {
+          text = self.state.names[loser] + ' doit faire un 69 pendant 90 secondes.';
+        }
+
+        self.clear();
+        self.app.innerHTML =
+          '<div class="gage-card"><div class="gage-label">Round ' + round + '</div><p class="gage-text">' + text + '</p></div>' +
+          '<button class="btn btn-primary" id="btn-round-done">Gage terminé</button>' +
+          self.renderStatusBar();
+
+        document.getElementById('btn-round-done').addEventListener('click', function() {
+          self.game.gagesCount[loser]++;
+          self.game.totalGages++;
+          self.game.intensity = Math.min(6, self.game.intensity + 0.15);
+          if (round >= maxRound) {
+            self.nextTurn();
+          } else {
+            round++;
+            playRound();
+          }
+        });
+      });
+    }
+    playRound();
+  },
+
+  // ========== HELPERS ==========
   pickSmartGage: function(loser, intensity) {
     var isF = loser === 'madame';
     if (intensity < 1.8) return this.pickFrom(GAGES.soft);
     if (intensity < 2.8) return this.pickFrom(GAGES.tease);
     if (intensity < 3.7) return this.pickFrom(GAGES.touch);
     if (intensity < 4.6) return this.pickFrom(isF ? GAGES.oral_f : GAGES.oral_m);
-    if (Math.random() < 0.3) return this.pickFrom(GAGES.ongoing);
+    if (Math.random() < 0.28) return this.pickFrom(GAGES.ongoing);
     return this.pickFrom(GAGES.heavy);
   },
 
@@ -785,15 +659,10 @@ nextTurn: function() {
     t = t.replace(/{winner}/g, this.state.names[winner]);
     t = t.replace(/{monsieur}/g, this.state.names.monsieur);
     t = t.replace(/{madame}/g, this.state.names.madame);
-
-    var prop = this.state.props.length > 0
-      ? this.state.props[Math.floor(Math.random() * this.state.props.length)]
-      : 'un objet';
+    var prop = this.state.props.length ? this.state.props[Math.floor(Math.random() * this.state.props.length)] : 'un objet';
     t = t.replace(/{prop}/g, prop);
-
     var sw = this.state.acts.indexOf('Avaler le sperme') !== -1 ? 'doit goûter et avaler' : 'peut recracher';
     t = t.replace(/{swallow}/g, sw);
-
     return t;
   },
 
@@ -806,34 +675,16 @@ nextTurn: function() {
 
   getRandomQuestion: function(force) {
     var level = force ? 'torride' :
-      this.game.intensity < 1.5 ? 'facile' :
-      this.game.intensity < 3.0 ? 'moyen' :
-      this.game.intensity < 4.5 ? 'chaud' : 'torride';
-
+      this.game.intensity < 1.8 ? 'facile' :
+      this.game.intensity < 3.3 ? 'moyen' :
+      this.game.intensity < 4.7 ? 'chaud' : 'torride';
     var pool = (typeof QUESTIONS !== 'undefined' && QUESTIONS[level]) ? QUESTIONS[level] : QUESTIONS.facile;
-
-    // Éviter les 5 dernières questions posées
-    var available = [];
-    for (var i = 0; i < pool.length; i++) {
-      if (this.game.lastQuestions.indexOf(pool[i].text) === -1) {
-        available.push(pool[i]);
-      }
-    }
-    if (available.length === 0) available = pool;
-
-    var q = available[Math.floor(Math.random() * available.length)];
-
-    this.game.lastQuestions.push(q.text);
-    if (this.game.lastQuestions.length > 8) {
-      this.game.lastQuestions.shift();
-    }
-
-    return q;
+    return pool[Math.floor(Math.random() * pool.length)];
   },
 
   showVictory: function() {
     this.clear();
-    this.app.innerHTML = '' +
+    this.app.innerHTML =
       '<div class="header"><h1>Vertige</h1><p>La fin</p></div>' +
       '<div class="promise">' +
         '<p>Vous êtes allés jusqu’au bout.</p>' +
