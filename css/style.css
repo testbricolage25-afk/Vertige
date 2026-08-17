@@ -495,3 +495,11 @@ body {
   margin-top: 1.4rem; font-size: 2.4rem;
   font-weight: 300; color: var(--accent);
 }
+.series-info {
+  text-align: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+  margin-bottom: 1rem;
+}
