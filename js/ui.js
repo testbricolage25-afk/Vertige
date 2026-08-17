@@ -115,9 +115,10 @@ const UI = {
 
   showProps() {
     this.clear();
-    const html = this.availableProps.map(p => 
-      `<label class="check-item"><input type="checkbox" value="\( {p}"><span> \){p}</span></label>`
-    ).join('');
+    let html = '';
+    this.availableProps.forEach(p => {
+      html += '<label class="check-item"><input type="checkbox" value="' + p + '"><span>' + p + '</span></label>';
+    });
     this.app.innerHTML = `
       <div class="header">
         <h1>Vertige</h1>
@@ -135,9 +136,10 @@ const UI = {
 
   showActs() {
     this.clear();
-    const html = this.availableActs.map(a => 
-      `<label class="check-item"><input type="checkbox" value="\( {a}" checked><span> \){a}</span></label>`
-    ).join('');
+    let html = '';
+    this.availableActs.forEach(a => {
+      html += '<label class="check-item"><input type="checkbox" value="' + a + '" checked><span>' + a + '</span></label>';
+    });
     this.app.innerHTML = `
       <div class="header">
         <h1>Vertige</h1>
@@ -155,9 +157,13 @@ const UI = {
 
   showClothes() {
     this.clear();
-    const makeList = (list) => list.map(item => 
-      `<label class="check-item small"><input type="checkbox" value="\( {item}"><span> \){item}</span></label>`
-    ).join('');
+    const makeList = (list) => {
+      let html = '';
+      list.forEach(item => {
+        html += '<label class="check-item small"><input type="checkbox" value="' + item + '"><span>' + item + '</span></label>';
+      });
+      return html;
+    };
     this.app.innerHTML = `
       <div class="header">
         <h1>Vertige</h1>
@@ -227,7 +233,8 @@ const UI = {
     return 'torride';
   },
 
-  increaseHeat(n = 5) {
+  increaseHeat(n) {
+    n = n || 5;
     this.game.heat = Math.min(100, this.game.heat + n);
   },
 
@@ -236,7 +243,8 @@ const UI = {
     return this.game.remainingClothes[who].some(c => bottoms.includes(c));
   },
 
-  removeRandomClothes(who, count = 1) {
+  removeRandomClothes(who, count) {
+    count = count || 1;
     for (let i = 0; i < count; i++) {
       if (this.game.remainingClothes[who].length === 0) break;
       const idx = Math.floor(Math.random() * this.game.remainingClothes[who].length);
@@ -283,7 +291,7 @@ const UI = {
 
       <div class="question-card">
         <p class="question-text">${question.text}</p>
-        ${question.type === 'list' ? `<p class="question-hint">Au moins ${question.count} réponses</p>` : ''}
+        ${question.type === 'list' ? '<p class="question-hint">Au moins ' + question.count + ' réponses</p>' : ''}
       </div>
 
       <div class="buzz-zone">
@@ -324,6 +332,11 @@ const UI = {
     const gage = this.pickSmartGage(loser, winner, level);
 
     this.clear();
+    let timerHtml = '';
+    if (gage.duration) {
+      timerHtml = '<div class="gage-timer" id="gage-timer">' + gage.duration + 's</div>';
+    }
+
     this.app.innerHTML = `
       <div class="game-header">
         <div class="heat-bar"><div class="heat-fill" style="width:${this.game.heat}%"></div></div>
@@ -336,7 +349,7 @@ const UI = {
       <div class="gage-card">
         <div class="gage-label">Gage pour ${this.state.names[loser]}</div>
         <p class="gage-text">${gage.text}</p>
-        \( {gage.duration ? `<div class="gage-timer" id="gage-timer"> \){gage.duration}s</div>` : ''}
+        ${timerHtml}
       </div>
 
       <button class="btn btn-primary" id="btn-gage-done" ${gage.duration ? 'disabled' : ''}>
@@ -380,12 +393,12 @@ const UI = {
       if (this.game.remainingClothes[loser].length > 0 || this.game.remainingClothes[winner].length > 0) {
         const who = Math.random() < 0.6 ? winner : loser;
         return {
-          text: `${this.state.names[loser]} enlève un vêtement de ${this.state.names[who]}.`,
-          removeClothes: { who, count: 1 }
+          text: this.state.names[loser] + ' enlève un vêtement de ' + this.state.names[who] + '.',
+          removeClothes: { who: who, count: 1 }
         };
       }
       return {
-        text: `${this.state.names[loser]} caresse ${this.state.names[winner]} par-dessus les vêtements pendant 40 secondes.`,
+        text: this.state.names[loser] + ' caresse ' + this.state.names[winner] + ' par-dessus les vêtements pendant 40 secondes.',
         duration: 40
       };
     }
@@ -394,19 +407,19 @@ const UI = {
       if (hasBottomLoser || hasBottomWinner) {
         const who = hasBottomWinner ? winner : loser;
         return {
-          text: `${this.state.names[loser]} enlève un vêtement du bas de ${this.state.names[who]}.`,
-          removeClothes: { who, count: 1 }
+          text: this.state.names[loser] + ' enlève un vêtement du bas de ' + this.state.names[who] + '.',
+          removeClothes: { who: who, count: 1 }
         };
       }
       if (props.length > 0 && Math.random() < 0.4) {
         const prop = props[Math.floor(Math.random() * props.length)];
         return {
-          text: `${this.state.names[loser]} utilise ${prop} sur ${this.state.names[winner]} pendant 45 secondes.`,
+          text: this.state.names[loser] + ' utilise ' + prop + ' sur ' + this.state.names[winner] + ' pendant 45 secondes.',
           duration: 45
         };
       }
       return {
-        text: `${this.state.names[loser]} embrasse et caresse le corps de ${this.state.names[winner]} pendant 50 secondes.`,
+        text: this.state.names[loser] + ' embrasse et caresse le corps de ' + this.state.names[winner] + ' pendant 50 secondes.',
         duration: 50
       };
     }
@@ -414,26 +427,26 @@ const UI = {
     if (level === 'chaud') {
       if (hasBottomLoser) {
         return {
-          text: `${this.state.names[loser]} doit enlever le dernier vêtement du bas et se toucher pendant 40 secondes.`,
+          text: this.state.names[loser] + ' doit enlever le dernier vêtement du bas et se toucher pendant 40 secondes.',
           duration: 40,
           removeClothes: { who: loser, count: 1 }
         };
       }
       if (Math.random() < 0.45) {
         return {
-          text: `${this.state.names[loser]} fait une fellation / un cunnilingus à ${this.state.names[winner]} pendant 60 secondes.`,
+          text: this.state.names[loser] + ' fait une fellation / un cunnilingus à ' + this.state.names[winner] + ' pendant 60 secondes.',
           duration: 60
         };
       }
       if (props.length > 0) {
         const prop = props[Math.floor(Math.random() * props.length)];
         return {
-          text: `${this.state.names[loser]} utilise ${prop} de façon très coquine sur ${this.state.names[winner]} pendant 50 secondes.`,
+          text: this.state.names[loser] + ' utilise ' + prop + ' de façon très coquine sur ' + this.state.names[winner] + ' pendant 50 secondes.',
           duration: 50
         };
       }
       return {
-        text: `${this.state.names[loser]} se masturbe devant ${this.state.names[winner]} pendant 45 secondes.`,
+        text: this.state.names[loser] + ' se masturbe devant ' + this.state.names[winner] + ' pendant 45 secondes.',
         duration: 45
       };
     }
@@ -442,7 +455,7 @@ const UI = {
     const totalOrgasms = this.game.orgasms.monsieur + this.game.orgasms.madame;
     if (totalOrgasms < this.game.targetOrgasms && Math.random() < 0.55) {
       return {
-        text: `${this.state.names[loser]} doit faire jouir ${this.state.names[winner]} (avec les moyens autorisés).`,
+        text: this.state.names[loser] + ' doit faire jouir ' + this.state.names[winner] + ' (avec les moyens autorisés).',
         isOrgasm: true,
         orgasmFor: winner
       };
@@ -451,13 +464,13 @@ const UI = {
     if (acts.length > 0 && Math.random() < 0.5) {
       const acte = acts[Math.floor(Math.random() * acts.length)];
       return {
-        text: `${this.state.names[loser]} et ${this.state.names[winner]} pratiquent : ${acte} pendant 90 secondes.`,
+        text: this.state.names[loser] + ' et ' + this.state.names[winner] + ' pratiquent : ' + acte + ' pendant 90 secondes.',
         duration: 90
       };
     }
 
     return {
-      text: `${this.state.names[loser]} doit faire jouir ${this.state.names[winner]} avec la bouche ou les mains.`,
+      text: this.state.names[loser] + ' doit faire jouir ' + this.state.names[winner] + ' avec la bouche ou les mains.',
       isOrgasm: true,
       orgasmFor: winner
     };
