@@ -229,7 +229,9 @@ diceBody: {
       ongoingGage: null,
       paused: false,
       timeoutId: null,
-      startTime: Date.now()
+      startTime: Date.now(),
+      successStreak: 0,          // réussites d'affilée
+      lastQuestions: []         // pour éviter les répétitions immédiates
     };
 
     this.nextTurn();
@@ -344,49 +346,105 @@ diceBody: {
 
       // On annule le timer
       if (self.game.timeoutId) {
-        clearTimeout(self.game.timeoutId);
-        self.game.timeoutId = null;
-      }
-      self.game.turnActive = false;
-      self.game.intensity = Math.min(6, self.game.intensity + (force ? 0.2 : 0.1));
-      self.nextTurn();
-    });
+nextTurn: function() {
+    if (this.game.orgasmsDone >= 3) {
+      this.showVictory();
+      return;
+    }
+    if (this.game.recoveryTurns > 0) this.game.recoveryTurns--;
 
-    // Bouton Dés
-    document.getElementById('btn-dice').addEventListener('click', function() {
+    this.game.currentPlayer = this.game.currentPlayer === 'monsieur' ? 'madame' : 'monsieur';
+    var player = this.game.currentPlayer;
+    var name = this.state.names[player];
+
+    // 8% de chance d'avoir un événement "Lancer les dés"
+    if (Math.random() < 0.08) {
+      this.showDiceEvent(player);
+      return;
+    }
+
+    var force = this.game.intensity >= 4.0 && Math.random() < 0.22;
+    var q = this.getRandomQuestion(force);
+    var duration = this.getTimer(q);
+
+    this.clear();
+
+    var ongoing = this.game.ongoingGage ? '<div class="ongoing">' + this.game.ongoingGage + '</div>' : '';
+
+    this.app.innerHTML = '' +
+      ongoing +
+      '<div class="player-turn">À toi <strong>' + name + '</strong></div>' +
+      '<div class="question-card">' +
+        '<p class="question-text">' + q.text + '</p>' +
+        (q.type === 'list' ? '<p class="question-hint">Au moins ' + q.count + ' réponses</p>' : '') +
+        (q.type === 'fetch' ? '<p class="question-hint">Tu peux te lever</p>' : '') +
+        (q.type === 'draw' ? '<p class="question-hint">Dessine puis buzz</p>' : '') +
+      '</div>' +
+      '<div class="buzz-zone">' +
+        '<p class="buzz-hint">' + (force ? 'PRESSION • Réponds vite' : 'Réponds puis buzz') + '</p>' +
+        '<button class="btn btn-primary btn-buzz" id="btn-buzz">BUZZ</button>' +
+        '<button class="btn btn-pause" id="btn-pause">Pause</button>' +
+      '</div>' +
+      this.renderStatusBar();
+
+    var self = this;
+    this.game.paused = false;
+    this.game.turnActive = true;
+    this.game.remainingTime = duration;
+    this.game.turnStart = Date.now();
+
+    this.game.timeoutId = setTimeout(function() {
+      if (self.game.turnActive && !self.game.paused) {
+        self.game.timeoutId = null;
+        self.game.turnActive = false;
+        self.onFail(player);
+      }
+    }, duration * 1000);
+
+    // BUZZ = réussite
+    document.getElementById('btn-buzz').addEventListener('click', function() {
       if (!self.game.turnActive || self.game.paused) return;
+
       if (self.game.timeoutId) {
         clearTimeout(self.game.timeoutId);
         self.game.timeoutId = null;
       }
       self.game.turnActive = false;
-      self.showDiceGage(player);
+
+      // Intensité monte très lentement
+      self.game.intensity = Math.min(6, self.game.intensity + (force ? 0.12 : 0.06));
+
+      // Série de réussites
+      self.game.successStreak++;
+      if (self.game.successStreak >= 3) {
+        self.game.successStreak = 0;
+        // L'adversaire prend un gage
+        var opponent = player === 'monsieur' ? 'madame' : 'monsieur';
+        self.game.gagesCount[opponent]++;
+        self.showForcedGage(opponent);
+        return;
+      }
+
+      self.nextTurn();
     });
-    
-    // Bouton Pause / Reprendre
+
+  
+    // Pause
     document.getElementById('btn-pause').addEventListener('click', function() {
       var btn = document.getElementById('btn-pause');
-
       if (!self.game.paused) {
-        // === Mettre en pause ===
         self.game.paused = true;
         btn.textContent = 'Reprendre';
-
-        // Calculer le temps restant
         var elapsed = (Date.now() - self.game.turnStart) / 1000;
         self.game.remainingTime = Math.max(3, self.game.remainingTime - elapsed);
-
         if (self.game.timeoutId) {
           clearTimeout(self.game.timeoutId);
           self.game.timeoutId = null;
         }
       } else {
-        // === Reprendre ===
         self.game.paused = false;
         btn.textContent = 'Pause';
         self.game.turnStart = Date.now();
-
-        // Relancer le timer avec le temps restant
         self.game.timeoutId = setTimeout(function() {
           if (self.game.turnActive && !self.game.paused) {
             self.game.timeoutId = null;
@@ -400,11 +458,82 @@ diceBody: {
 
   onFail: function(loser) {
     this.game.gagesCount[loser]++;
-    this.game.intensity = Math.min(6, this.game.intensity + 0.4);
+    this.game.intensity = Math.min(6, this.game.intensity + 0.28); // moins violent qu'avant
+    this.game.successStreak = 0;
     this.game.ongoingGage = null;
     this.showGage(loser);
   },
 
+        showDiceEvent: function(player) {
+    var self = this;
+    var loser = player;
+    var winner = player === 'monsieur' ? 'madame' : 'monsieur';
+
+    this.clear();
+    this.app.innerHTML = '' +
+      '<div class="player-turn">Événement</div>' +
+      '<div class="gage-card">' +
+        '<div class="gage-label">Lancer les dés</div>' +
+        '<p class="gage-text" id="dice-text">Appuie pour lancer les dés</p>' +
+      '</div>' +
+      '<button class="btn btn-primary" id="btn-roll">Lancer les dés</button>' +
+      '<button class="btn btn-primary" id="btn-dice-done" style="display:none">Action terminée</button>' +
+      this.renderStatusBar();
+
+    document.getElementById('btn-roll').addEventListener('click', function() {
+      var intensity = self.game.intensity;
+      var bodyP, actP;
+
+      if (intensity < 2.2) {
+        bodyP = self.diceBody.soft;
+        actP = self.diceAction.soft;
+      } else if (intensity < 4.0) {
+        bodyP = self.diceBody.medium;
+        actP = self.diceAction.medium;
+      } else {
+        bodyP = self.diceBody.hard;
+        actP = self.diceAction.hard;
+      }
+
+      var body = bodyP[Math.floor(Math.random() * bodyP.length)];
+      var act = actP[Math.floor(Math.random() * actP.length)];
+
+      var text = self.state.names[loser] + ' doit ' + act + ' ' + body + ' de ' + self.state.names[winner] + ' pendant 50 secondes.';
+
+      document.getElementById('dice-text').textContent = text;
+      document.getElementById('btn-roll').style.display = 'none';
+      document.getElementById('btn-dice-done').style.display = 'block';
+    });
+
+    document.getElementById('btn-dice-done').addEventListener('click', function() {
+      self.game.gagesCount[loser]++;
+      self.game.intensity = Math.min(6, self.game.intensity + 0.15);
+      self.game.successStreak = 0;
+      self.nextTurn();
+    });
+  },
+        showForcedGage: function(loser) {
+    var winner = loser === 'monsieur' ? 'madame' : 'monsieur';
+    var self = this;
+
+    var raw = this.pickSmartGage(loser, this.game.intensity);
+    var text = this.fill(raw, loser, winner);
+
+    this.clear();
+    this.app.innerHTML = '' +
+      '<div class="gage-card">' +
+        '<div class="gage-label">Gage (série de 3)</div>' +
+        '<p class="gage-text">' + text + '</p>' +
+      '</div>' +
+      '<button class="btn btn-primary" id="btn-forced-done">Gage terminé</button>' +
+      this.renderStatusBar();
+
+    document.getElementById('btn-forced-done').addEventListener('click', function() {
+      self.game.intensity = Math.min(6, self.game.intensity + 0.18);
+      self.nextTurn();
+    });
+  },
+        
   showDiceGage: function(loser) {
     var winner = loser === 'monsieur' ? 'madame' : 'monsieur';
     var intensity = this.game.intensity;
@@ -536,10 +665,11 @@ diceBody: {
     var self = this;
 
     var shouldOrgasm = false;
-    if (this.game.orgasmsDone === 0 && intensity >= 2.8 && intensity < 4.2 && Math.random() < 0.42) shouldOrgasm = true;
-    if (this.game.orgasmsDone === 1 && intensity >= 4.0 && intensity < 5.3 && Math.random() < 0.48) shouldOrgasm = true;
-    if (this.game.orgasmsDone === 2 && intensity >= 5.0 && Math.random() < 0.55) shouldOrgasm = true;
-
+    // Beaucoup plus rare et plus tardif
+    if (this.game.orgasmsDone === 0 && intensity >= 3.6 && Math.random() < 0.28) shouldOrgasm = true;
+    if (this.game.orgasmsDone === 1 && intensity >= 4.6 && Math.random() < 0.32) shouldOrgasm = true;
+    if (this.game.orgasmsDone === 2 && intensity >= 5.3 && Math.random() < 0.38) shouldOrgasm = true;
+    
     var isDice = !shouldOrgasm && Math.random() < 0.13;
     var text = '';
     var isOrgasm = false;
@@ -676,12 +806,29 @@ diceBody: {
 
   getRandomQuestion: function(force) {
     var level = force ? 'torride' :
-      this.game.intensity < 1.8 ? 'facile' :
-      this.game.intensity < 3.3 ? 'moyen' :
-      this.game.intensity < 4.7 ? 'chaud' : 'torride';
+      this.game.intensity < 1.5 ? 'facile' :
+      this.game.intensity < 3.0 ? 'moyen' :
+      this.game.intensity < 4.5 ? 'chaud' : 'torride';
 
     var pool = (typeof QUESTIONS !== 'undefined' && QUESTIONS[level]) ? QUESTIONS[level] : QUESTIONS.facile;
-    return pool[Math.floor(Math.random() * pool.length)];
+
+    // Éviter les 5 dernières questions posées
+    var available = [];
+    for (var i = 0; i < pool.length; i++) {
+      if (this.game.lastQuestions.indexOf(pool[i].text) === -1) {
+        available.push(pool[i]);
+      }
+    }
+    if (available.length === 0) available = pool;
+
+    var q = available[Math.floor(Math.random() * available.length)];
+
+    this.game.lastQuestions.push(q.text);
+    if (this.game.lastQuestions.length > 8) {
+      this.game.lastQuestions.shift();
+    }
+
+    return q;
   },
 
   showVictory: function() {
