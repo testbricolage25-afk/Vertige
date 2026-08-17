@@ -295,3 +295,142 @@ body {
 .mt {
   margin-top: 1.5rem;
    }
+/* ============================================================
+   STYLES DU JEU
+   ============================================================ */
+
+.game-header {
+  margin-bottom: 1.8rem;
+}
+
+.heat-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--bg-card);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.7rem;
+}
+
+.heat-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c45c6a, #e09aa3, #c9a87c);
+  transition: width 0.4s ease;
+}
+
+.game-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.game-meta .level {
+  color: var(--accent-soft);
+  font-weight: 500;
+}
+
+.player-turn {
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-soft);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.04em;
+}
+
+.player-turn strong {
+  color: var(--accent-soft);
+  font-weight: 500;
+}
+
+.question-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.8rem 1.4rem;
+  margin-bottom: 1.8rem;
+  text-align: center;
+}
+
+.question-text {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: var(--text);
+  font-weight: 400;
+}
+
+.question-hint {
+  margin-top: 0.9rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.timer {
+  text-align: center;
+  font-size: 2.8rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 2rem;
+}
+
+.game-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.btn-success {
+  background: transparent;
+  border: 1px solid #5a9e6f;
+  color: #a8d5b5;
+}
+
+.btn-success:active {
+  background: #5a9e6f;
+  color: var(--bg);
+}
+
+.btn-danger {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent-soft);
+}
+
+.btn-danger:active {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* Gage */
+.gage-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.gage-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.2rem;
+}
+
+.gage-text {
+  font-size: 1.2rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.gage-hint {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
