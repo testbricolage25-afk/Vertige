@@ -1,47 +1,93 @@
 const GAGES = {
-  // Gages de base (le moteur choisira intelligemment selon vêtements / chaleur / objets)
-  undress: [
+  // ===== SOFT / DÉBUT =====
+  soft: [
     "{loser} enlève un vêtement de {winner}.",
     "{loser} enlève un de ses propres vêtements.",
-    "{loser} enlève un vêtement de {winner} avec les dents si possible.",
+    "{loser} embrasse longuement le cou de {winner} pendant 40 secondes.",
+    "{loser} embrasse le torse / la poitrine de {winner} pendant 40 secondes.",
+    "{loser} caresse les cheveux et le visage de {winner} pendant 35 secondes.",
+    "{loser} masse les épaules et la nuque de {winner} pendant 45 secondes.",
+    "{loser} embrasse les mains et les poignets de {winner} de façon sensuelle.",
   ],
 
+  // ===== TEASE =====
+  tease: [
+    "{loser} enlève le vêtement du bas de {winner} en l’embrassant.",
+    "{loser} enlève son propre bas lentement devant {winner}.",
+    "{loser} caresse {winner} par-dessus les vêtements pendant 50 secondes.",
+    "{loser} embrasse l’intérieur des cuisses de {winner} pendant 45 secondes.",
+    "{loser} masse le dos et les fesses de {winner} pendant 50 secondes.",
+    "{loser} lèche le ventre de {winner} lentement pendant 40 secondes.",
+    "{loser} utilise {prop} sur le corps de {winner} pendant 45 secondes.",
+  ],
+
+  // ===== TOUCH =====
   touch: [
-    "{loser} caresse {winner} par-dessus les vêtements pendant {duration} secondes.",
-    "{loser} masse les cuisses de {winner} pendant {duration} secondes.",
-    "{loser} embrasse le cou et les épaules de {winner} pendant {duration} secondes.",
-    "{loser} caresse le torse / la poitrine de {winner} pendant {duration} secondes.",
+    "{loser} masturbe lentement {winner} pendant 60 secondes.",
+    "{loser} se fait masturber par {winner} pendant 60 secondes.",
+    "{loser} caresse les seins / le torse et le bas de {winner} en même temps pendant 55 secondes.",
+    "{loser} embrasse et touche partout {winner} pendant 50 secondes.",
+    "{loser} utilise {prop} de façon coquine sur {winner} pendant 50 secondes.",
+    "{loser} fait un massage très sensuel à l’huile sur {winner} (si disponible) pendant 60 secondes.",
   ],
 
-  oral_light: [
-    "{loser} embrasse l’intérieur des cuisses de {winner} pendant {duration} secondes.",
-    "{loser} lèche le ventre de {winner} pendant {duration} secondes.",
-    "{loser} suce les doigts de {winner} de façon sensuelle pendant {duration} secondes.",
+  // ===== ORAL MADAME (quand elle perd) =====
+  oral_f: [
+    "{loser} fait un cunnilingus lent et profond à {winner} pendant 70 secondes.",
+    "{loser} lèche et suce le clitoris de {winner} pendant 65 secondes.",
+    "{loser} doigte doucement {winner} tout en la léchant pendant 70 secondes.",
+    "{loser} utilise le vibromasseur sur {winner} pendant 70 secondes (si disponible).",
+    "{loser} fait jouir {winner} avec sa bouche et ses doigts.",
+    "{loser} parcourt tout le corps de {winner} avec sa langue pendant 60 secondes.",
   ],
 
-  prop: [
-    "{loser} utilise {prop} sur le corps de {winner} pendant {duration} secondes.",
-    "{loser} fait glisser {prop} sur les zones sensibles de {winner}.",
+  // ===== ORAL MONSIEUR (quand il perd) =====
+  oral_m: [
+    "{loser} fait une fellation lente et profonde à {winner} pendant 70 secondes.",
+    "{loser} lèche et suce les boules de {winner} tout en le masturbant pendant 65 secondes.",
+    "{loser} fait une fellation baveuse à {winner} pendant 75 secondes.",
+    "{loser} masturbe {winner} avec beaucoup de salive pendant 55 secondes.",
+    "{loser} fait une fellation très lente jusqu’au bord pendant 80 secondes (sans le faire jouir).",
   ],
 
-  masturbate: [
-    "{loser} se touche par-dessus les vêtements pendant {duration} secondes.",
-    "{loser} se masturbe lentement pendant {duration} secondes (vêtements du bas retirés).",
-    "{loser} doit se toucher pendant les {turns} prochains tours.",
+  // ===== HEAVY / ONGOING =====
+  heavy: [
+    "{loser} masturbe {winner} de façon rapide et saliveuse pendant 50 secondes.",
+    "{loser} fait une fellation / un cunnilingus intense pendant 80 secondes.",
+    "{loser} doit maintenir une pénétration (doigts ou sexe) jusqu’à la prochaine perte.",
+    "{loser} doit masturber {winner} jusqu’à la prochaine perte.",
+    "{loser} doit faire une fellation / un cunnilingus jusqu’à la prochaine perte.",
+    "{loser} s’assoit sur le visage de {winner} pendant 60 secondes.",
+    "{loser} fait une branlette espagnole à {winner} pendant 60 secondes (si possible).",
   ],
 
-  oral: [
-    "{loser} fait une fellation / un cunnilingus à {winner} pendant {duration} secondes.",
-    "{loser} doit faire jouir {winner} avec la bouche.",
+  // ===== ONGOING (effets qui durent) =====
+  ongoing: [
+    "{loser} doit continuer à masturber {winner} jusqu’à la prochaine perte de l’un des deux.",
+    "{loser} doit garder sa bouche sur {winner} jusqu’à la prochaine perte.",
+    "{loser} doit maintenir une pénétration digitale jusqu’à la prochaine perte.",
+    "Pendant les prochains tours, {loser} doit rester à genoux devant {winner}.",
+    "{loser} doit garder une main sur le sexe de {winner} jusqu’à la prochaine perte.",
   ],
 
-  penetration: [
-    "{loser} et {winner} doivent pratiquer {acte} pendant {duration} secondes.",
-    "Pénétration pendant {duration} secondes (celui qui a perdu dirige).",
+  // ===== RÉCUPÉRATION (après éjaculation) =====
+  recovery: [
+    "{loser} masse délicatement le corps de {winner} pendant 50 secondes.",
+    "{loser} embrasse tendrement {winner} partout sauf les zones sensibles pendant 45 secondes.",
+    "{loser} caresse les cheveux et le visage de {winner} pendant 40 secondes.",
+    "{loser} fait un massage de la tête et de la nuque à {winner} pendant 50 secondes.",
+    "Les deux s’embrassent longuement et se câlinent pendant 60 secondes.",
   ],
 
+  // ===== ÉJACULATIONS =====
   orgasm: [
-    "{loser} doit faire jouir {winner} (avec les moyens autorisés).",
-    "{winner} a le droit de jouir. {loser} doit l’aider jusqu’à l’orgasme.",
+    "{monsieur} doit jouir dans la bouche de {madame}. {madame} {swallow}.",
+    "{monsieur} doit jouir sur le visage de {madame}.",
+    "{monsieur} doit jouir sur les seins de {madame}.",
+    "{monsieur} doit jouir entre les seins de {madame}.",
+    "{monsieur} doit jouir en pénétration vaginale.",
+    "{monsieur} doit jouir en pénétration anale.",
+    "{monsieur} doit jouir sur le ventre de {madame}.",
+    "{monsieur} doit jouir sur les fesses de {madame}.",
   ]
 };
