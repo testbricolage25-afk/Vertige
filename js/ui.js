@@ -32,15 +32,15 @@ const UI = {
     'Cheveux attachés', 'Chaussettes', 'Chaussures', 'Collant'
   ],
 
-  diceBody: {
-    soft: ['lèvres', 'cou', 'oreilles', 'mains', 'épaules'],
-    medium: ['seins', 'torse', 'ventre', 'cuisses', 'fesses'],
-    hard: ['sexe', 'clitoris', 'gland', 'boules', 'anus']
+diceBody: {
+    soft: ['lèvres', 'cou', 'oreilles', 'seins', 'ventre', 'intérieur des cuisses'],
+    medium: ['seins', 'fesses', 'sexe', 'clitoris', 'gland', 'boules'],
+    hard: ['sexe', 'clitoris', 'gland', 'boules', 'anus', 'entrée', 'gorge']
   },
   diceAction: {
-    soft: ['embrasser', 'lécher doucement', 'caresser', 'souffler'],
-    medium: ['sucer', 'lécher longuement', 'masturber lentement', 'doigter doucement'],
-    hard: ['sucer profondément', 'masturber rapidement', 'doigter intensément', 'faire jouir']
+    soft: ['embrasser langoureusement', 'lécher lentement', 'caresser avec les doigts', 'sucer doucement'],
+    medium: ['sucer', 'lécher longuement', 'masturber lentement', 'doigter doucement', 'lécher en cercle'],
+    hard: ['sucer profondément', 'masturber rapidement', 'doigter intensément', 'lécher et sucer en même temps', 'faire jouir']
   },
 
   init: function() {
@@ -312,6 +312,7 @@ const UI = {
       '<div class="buzz-zone">' +
         '<p class="buzz-hint">' + (force ? 'PRESSION • Réponds vite' : 'Réponds puis buzz') + '</p>' +
         '<button class="btn btn-primary btn-buzz" id="btn-buzz">BUZZ</button>' +
+        '<button class="btn btn-dice" id="btn-dice">Lancer les dés</button>' +
         '<button class="btn btn-pause" id="btn-pause">Pause</button>' +
       '</div>' +
       this.renderStatusBar();
@@ -322,6 +323,12 @@ const UI = {
     this.game.remainingTime = duration;
     this.game.turnStart = Date.now();
 
+    // Mini-jeux spéciaux
+    if (q.type === 'rps') {
+      this.showRPS(player);
+      return;
+    }
+    
     // Timer principal
     this.game.timeoutId = setTimeout(function() {
       if (self.game.turnActive && !self.game.paused) {
@@ -345,6 +352,17 @@ const UI = {
       self.nextTurn();
     });
 
+    // Bouton Dés
+    document.getElementById('btn-dice').addEventListener('click', function() {
+      if (!self.game.turnActive || self.game.paused) return;
+      if (self.game.timeoutId) {
+        clearTimeout(self.game.timeoutId);
+        self.game.timeoutId = null;
+      }
+      self.game.turnActive = false;
+      self.showDiceGage(player);
+    });
+    
     // Bouton Pause / Reprendre
     document.getElementById('btn-pause').addEventListener('click', function() {
       var btn = document.getElementById('btn-pause');
@@ -387,6 +405,131 @@ const UI = {
     this.showGage(loser);
   },
 
+  showDiceGage: function(loser) {
+    var winner = loser === 'monsieur' ? 'madame' : 'monsieur';
+    var intensity = this.game.intensity;
+    var self = this;
+
+    this.clear();
+
+    this.app.innerHTML = '' +
+      '<div class="gage-card">' +
+        '<div class="gage-label">DÉS</div>' +
+        '<p class="gage-text" id="dice-result">Appuie pour lancer...</p>' +
+      '</div>' +
+      '<button class="btn btn-primary" id="btn-roll">Lancer les dés</button>' +
+      '<button class="btn btn-primary" id="btn-dice-done" style="display:none">Gage terminé</button>' +
+      this.renderStatusBar();
+
+    document.getElementById('btn-roll').addEventListener('click', function() {
+      var bodyP, actP;
+      if (intensity < 2.5) {
+        bodyP = self.diceBody.soft;
+        actP = self.diceAction.soft;
+      } else if (intensity < 4.2) {
+        bodyP = self.diceBody.medium;
+        actP = self.diceAction.medium;
+      } else {
+        bodyP = self.diceBody.hard;
+        actP = self.diceAction.hard;
+      }
+
+      var body = bodyP[Math.floor(Math.random() * bodyP.length)];
+      var act = actP[Math.floor(Math.random() * actP.length)];
+
+      var text = self.state.names[loser] + ' doit ' + act + ' ' + body + ' de ' + self.state.names[winner] + ' pendant 60 secondes.';
+
+      document.getElementById('dice-result').textContent = text;
+      document.getElementById('btn-roll').style.display = 'none';
+      document.getElementById('btn-dice-done').style.display = 'block';
+    });
+
+    document.getElementById('btn-dice-done').addEventListener('click', function() {
+      self.game.gagesCount[loser]++;
+      self.game.intensity = Math.min(6, self.game.intensity + 0.25);
+      self.nextTurn();
+    });
+  },
+
+  showRPS: function(player) {
+    var self = this;
+    var score = { monsieur: 0, madame: 0 };
+    var round = 1;
+
+    function render() {
+      self.clear();
+      self.app.innerHTML = '' +
+        '<div class="header"><h1>Pierre • Feuille • Ciseaux</h1><p>Manche ' + round + ' / Premier à 3</p></div>' +
+        '<div class="rps-score">' +
+          self.state.names.monsieur + ' : ' + score.monsieur + ' — ' +
+          self.state.names.madame + ' : ' + score.madame +
+        '</div>' +
+        '<div class="rps-buttons">' +
+          '<button class="btn btn-primary rps-btn" data-choice="pierre">Pierre</button>' +
+          '<button class="btn btn-primary rps-btn" data-choice="feuille">Feuille</button>' +
+          '<button class="btn btn-primary rps-btn" data-choice="ciseaux">Ciseaux</button>' +
+        '</div>' +
+        self.renderStatusBar();
+
+      var buttons = document.querySelectorAll('.rps-btn');
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('click', function() {
+          var playerChoice = this.getAttribute('data-choice');
+          var choices = ['pierre', 'feuille', 'ciseaux'];
+          var otherChoice = choices[Math.floor(Math.random() * 3)];
+
+          var winner = null;
+          if (playerChoice === otherChoice) {
+            // égalité
+          } else if (
+            (playerChoice === 'pierre' && otherChoice === 'ciseaux') ||
+            (playerChoice === 'feuille' && otherChoice === 'pierre') ||
+            (playerChoice === 'ciseaux' && otherChoice === 'feuille')
+          ) {
+            winner = player;
+          } else {
+            winner = player === 'monsieur' ? 'madame' : 'monsieur';
+          }
+
+          if (winner) score[winner]++;
+
+          if (score.monsieur >= 3 || score.madame >= 3) {
+            var dominator = score.monsieur >= 3 ? 'monsieur' : 'madame';
+            var dominated = dominator === 'monsieur' ? 'madame' : 'monsieur';
+            self.showRPSResult(dominator, dominated);
+          } else {
+            round++;
+            render();
+          }
+        });
+      }
+    }
+
+    render();
+  },
+
+  showRPSResult: function(dominator, dominated) {
+    var self = this;
+    var text = this.state.names[dominator] + ' a gagné.\n' +
+               this.state.names[dominator] + ' domine ' + this.state.names[dominated] + '.\n\n' +
+               'Fellation / Cunnilingus ou pénétration (position au choix du gagnant) pendant 90 secondes.';
+
+    this.clear();
+    this.app.innerHTML = '' +
+      '<div class="gage-card">' +
+        '<div class="gage-label">DOMINATION</div>' +
+        '<p class="gage-text">' + text.replace(/\n/g, '<br>') + '</p>' +
+      '</div>' +
+      '<button class="btn btn-primary" id="btn-rps-done">Terminé</button>' +
+      this.renderStatusBar();
+
+    document.getElementById('btn-rps-done').addEventListener('click', function() {
+      self.game.gagesCount[dominated]++;
+      self.game.intensity = Math.min(6, self.game.intensity + 0.35);
+      self.nextTurn();
+    });
+  },
+  
   showGage: function(loser) {
     var winner = loser === 'monsieur' ? 'madame' : 'monsieur';
     var intensity = this.game.intensity;
