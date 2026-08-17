@@ -1,50 +1,47 @@
-// ============================================================
-// VERTIGE — Banque de gages
-// Placeholders disponibles :
-// {monsieur} {madame} {prop} {acte} {vetement_m} {vetement_f}
-// ============================================================
-
 const GAGES = {
-  facile: [
-    "{madame} enlève un vêtement de {monsieur}.",
-    "{monsieur} enlève un vêtement de {madame}.",
-    "Embrassez-vous pendant 20 secondes sans vous séparer.",
-    "{monsieur} embrasse le cou de {madame} pendant 15 secondes.",
-    "{madame} embrasse la main de {monsieur} de façon sensuelle.",
-    "Les deux se regardent dans les yeux sans parler pendant 30 secondes.",
-    "{monsieur} masse les épaules de {madame} pendant 30 secondes.",
+  // Gages de base (le moteur choisira intelligemment selon vêtements / chaleur / objets)
+  undress: [
+    "{loser} enlève un vêtement de {winner}.",
+    "{loser} enlève un de ses propres vêtements.",
+    "{loser} enlève un vêtement de {winner} avec les dents si possible.",
   ],
 
-  moyen: [
-    "{madame} enlève un vêtement supplémentaire de {monsieur}.",
-    "{monsieur} enlève un vêtement supplémentaire de {madame}.",
-    "Embrassez-vous profondément pendant 30 secondes.",
-    "{monsieur} embrasse le ventre de {madame} pendant 20 secondes.",
-    "{madame} embrasse le torse de {monsieur} pendant 20 secondes.",
-    "Utilisez {prop} sur le corps de l’autre pendant 30 secondes.",
-    "{monsieur} touche les cuisses de {madame} pendant 20 secondes.",
-    "{madame} caresse la nuque de {monsieur} de façon sensuelle.",
+  touch: [
+    "{loser} caresse {winner} par-dessus les vêtements pendant {duration} secondes.",
+    "{loser} masse les cuisses de {winner} pendant {duration} secondes.",
+    "{loser} embrasse le cou et les épaules de {winner} pendant {duration} secondes.",
+    "{loser} caresse le torse / la poitrine de {winner} pendant {duration} secondes.",
   ],
 
-  chaud: [
-    "{madame} enlève un vêtement de {monsieur} avec la bouche si possible.",
-    "{monsieur} enlève un vêtement de {madame} lentement et sensuellement.",
-    "Embrassez-vous partout sauf sur la bouche pendant 40 secondes.",
-    "Utilisez {prop} sur une zone sensible de l’autre pendant 40 secondes.",
-    "{monsieur} embrasse l’intérieur des cuisses de {madame}.",
-    "{madame} caresse {monsieur} par-dessus les vêtements pendant 30 secondes.",
-    "L’un des deux doit faire un strip-tease très lent de 1 minute.",
-    "Utilisez {prop} et embrassez-vous en même temps.",
+  oral_light: [
+    "{loser} embrasse l’intérieur des cuisses de {winner} pendant {duration} secondes.",
+    "{loser} lèche le ventre de {winner} pendant {duration} secondes.",
+    "{loser} suce les doigts de {winner} de façon sensuelle pendant {duration} secondes.",
   ],
 
-  torride: [
-    "L’un des deux doit réaliser {acte} pendant au moins 1 minute.",
-    "{monsieur} doit utiliser {prop} sur {madame} de façon très coquine.",
-    "{madame} doit utiliser {prop} sur {monsieur} de façon très coquine.",
-    "Faites {acte} pendant 90 secondes sans vous arrêter.",
-    "L’un des deux donne un ordre très coquin à l’autre… et l’autre doit obéir.",
-    "Retirez le maximum de vêtements restants et continuez à vous toucher.",
-    "Utilisez {prop} + un baiser très long et très profond.",
-    "L’un des deux doit faire jouir l’autre avec la bouche ou les mains (au choix).",
+  prop: [
+    "{loser} utilise {prop} sur le corps de {winner} pendant {duration} secondes.",
+    "{loser} fait glisser {prop} sur les zones sensibles de {winner}.",
+  ],
+
+  masturbate: [
+    "{loser} se touche par-dessus les vêtements pendant {duration} secondes.",
+    "{loser} se masturbe lentement pendant {duration} secondes (vêtements du bas retirés).",
+    "{loser} doit se toucher pendant les {turns} prochains tours.",
+  ],
+
+  oral: [
+    "{loser} fait une fellation / un cunnilingus à {winner} pendant {duration} secondes.",
+    "{loser} doit faire jouir {winner} avec la bouche.",
+  ],
+
+  penetration: [
+    "{loser} et {winner} doivent pratiquer {acte} pendant {duration} secondes.",
+    "Pénétration pendant {duration} secondes (celui qui a perdu dirige).",
+  ],
+
+  orgasm: [
+    "{loser} doit faire jouir {winner} (avec les moyens autorisés).",
+    "{winner} a le droit de jouir. {loser} doit l’aider jusqu’à l’orgasme.",
   ]
 };
