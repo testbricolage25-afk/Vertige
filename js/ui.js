@@ -1,7 +1,6 @@
 const UI = {
   app: null,
   state: {
-    mode: null,
     names: { monsieur: '', madame: '' },
     props: [],
     acts: [],
@@ -36,7 +35,7 @@ const UI = {
 
   init() {
     this.app = document.getElementById('app');
-    this.showModeSelection();
+    this.showNames();
   },
 
   clear() {
@@ -49,39 +48,6 @@ const UI = {
   },
 
   // ====================== SETUP ======================
-  showModeSelection() {
-    this.clear();
-    this.app.innerHTML = `
-      <div class="header">
-        <h1>Vertige</h1>
-        <p>Choisissez jusqu’où vous irez</p>
-      </div>
-      <div class="modes">
-        <div class="mode-card" data-mode="rapide">
-          <h2>Rapide</h2>
-          <div class="duration">≈ 20 – 30 min • 1 éjaculation</div>
-          <p>Pression rapide. Une seule montée.</p>
-        </div>
-        <div class="mode-card" data-mode="pose">
-          <h2>Posé</h2>
-          <div class="duration">≈ 45 – 70 min • 2 éjaculations</div>
-          <p>On prend le temps. Deux vagues.</p>
-        </div>
-        <div class="mode-card" data-mode="marathon">
-          <h2>Marathon</h2>
-          <div class="duration">≈ 1h30+ • 3 éjaculations</div>
-          <p>Longue descente. Progression totale.</p>
-        </div>
-      </div>
-    `;
-    document.querySelectorAll('.mode-card').forEach(card => {
-      card.addEventListener('click', () => {
-        this.state.mode = card.dataset.mode;
-        this.showNames();
-      });
-    });
-  },
-
   showNames() {
     this.clear();
     this.app.innerHTML = `
@@ -163,7 +129,7 @@ const UI = {
       <div class="header">
         <h1>Vertige</h1>
         <p>Votre tenue actuelle</p>
-        <span class="small">Le jeu s’en servira. Soyez précis.</span>
+        <span class="small">Le jeu s’en servira.</span>
       </div>
       <div class="clothes-grid">
         <div>
@@ -202,156 +168,76 @@ const UI = {
 
   // ====================== MOTEUR ======================
   startGame() {
-    const target = { rapide: 1, pose: 2, marathon: 3 }[this.state.mode];
-
-    // Plan des éjaculations selon les actes autorisés
     const hasVaginal = this.state.acts.includes('Pénétration vaginale');
     const hasAnal = this.state.acts.includes('Pénétration anale');
     const hasSwallow = this.state.acts.includes('Avaler le sperme');
-    const hasOral = this.state.acts.includes('Sexe oral vaginal') || this.state.acts.includes('Sexe oral anal');
 
-    let orgasmPlan = [];
-
-    if (this.state.mode === 'rapide') {
-      if (hasVaginal) orgasmPlan = ['vaginal'];
-      else if (hasAnal) orgasmPlan = ['anal'];
-      else if (hasSwallow) orgasmPlan = ['buccal'];
-      else orgasmPlan = ['visage_ou_seins'];
-    } 
-    else if (this.state.mode === 'pose') {
-      orgasmPlan = ['visage_ou_seins'];
-      if (hasVaginal) orgasmPlan.push('vaginal');
-      else if (hasAnal) orgasmPlan.push('anal');
-      else orgasmPlan.push('seins_ou_fesses');
-    } 
-    else {
-      // marathon
-      orgasmPlan = ['visage_ou_buccal', 'seins_ou_entre', hasVaginal ? 'vaginal' : (hasAnal ? 'anal' : 'seins_ou_fesses')];
-    }
+    let plan = ['visage_ou_buccal', 'seins_ou_entre'];
+    if (hasVaginal) plan.push('vaginal');
+    else if (hasAnal) plan.push('anal');
+    else plan.push('seins_ou_fesses');
 
     this.game = {
-      heat: 0,
+      intensity: 0,
       fails: 0,
-      questionsAsked: 0,
       currentPlayer: Math.random() < 0.5 ? 'monsieur' : 'madame',
       remainingClothes: {
         monsieur: [...this.state.clothes.monsieur],
         madame: [...this.state.clothes.madame]
       },
       orgasmsDone: 0,
-      targetOrgasms: target,
-      orgasmPlan: orgasmPlan,
-      recoveryTurns: 0,          // tours de récupération après éjac
-      seriesLeft: 0,             // pour les speed quiz en chaîne
-      currentSeriesQuestion: null,
-      timeoutId: null
+      targetOrgasms: 3,
+      orgasmPlan: plan,
+      recoveryTurns: 0,
+      ongoingGage: null,
+      timeoutId: null,
+      startTime: Date.now()
     };
 
     this.nextTurn();
   },
 
-  getHeatLevel() {
-    if (this.game.heat < 25) return 'facile';
-    if (this.game.heat < 50) return 'moyen';
-    if (this.game.heat < 75) return 'chaud';
-    return 'torride';
-  },
-
-  increaseHeat(n) {
-    this.game.heat = Math.min(100, this.game.heat + (n || 4));
-  },
-
-  hasBottomClothes(who) {
-    const bottoms = ['Caleçon','Culotte / String','Lingerie une pièce','Short','Pantalon','Jupe','Robe','Maillot de bain','Maillot 1 pièce','Maillot 2 pièces','Collant'];
-    return this.game.remainingClothes[who].some(c => bottoms.includes(c));
-  },
-
-  removeRandomClothes(who, count) {
-    count = count || 1;
-    for (let i = 0; i < count; i++) {
-      if (this.game.remainingClothes[who].length === 0) break;
-      const idx = Math.floor(Math.random() * this.game.remainingClothes[who].length);
-      this.game.remainingClothes[who].splice(idx, 1);
-    }
-  },
-
-  getRandomQuestion() {
-    // Si on est en série speed
-    if (this.game.seriesLeft > 0 && this.game.currentSeriesQuestion) {
-      return this.game.currentSeriesQuestion;
-    }
-
-    const level = this.getHeatLevel();
-    const pool = (typeof QUESTIONS !== 'undefined' && QUESTIONS[level]) ? QUESTIONS[level] : [];
-    if (pool.length === 0) return { type: "open", text: "Décris ce que tu ressens.", timer: [15, 25] };
-
-    const q = pool[Math.floor(Math.random() * pool.length)];
-
-    // 25% de chance de lancer une série de 3 (sauf fetch)
-    if (q.type !== 'fetch' && Math.random() < 0.28) {
-      this.game.seriesLeft = 3;
-      this.game.currentSeriesQuestion = q;
-    }
-
-    return q;
+  getTimer(q) {
+    const base = q.timer || [12, 20];
+    let min = base[0], max = base[1];
+    const minutes = (Date.now() - this.game.startTime) / 60000;
+    if (minutes > 40) { min = Math.max(7, min-3); max = Math.max(12, max-4); }
+    if (minutes > 80) { min = Math.max(6, min-2); max = Math.max(10, max-3); }
+    if (this.game.intensity >= 4) { min = Math.max(6, min-2); max = Math.max(10, max-3); }
+    if (this.game.recoveryTurns > 0) { min += 5; max += 7; }
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   },
 
   nextTurn() {
-    if (this.game.orgasmsDone >= this.game.targetOrgasms) {
-      return this.showVictory();
-    }
+    if (this.game.orgasmsDone >= 3) return this.showVictory();
 
-    // Récupération après éjaculation
-    if (this.game.recoveryTurns > 0) {
-      this.game.recoveryTurns--;
-    }
+    if (this.game.recoveryTurns > 0) this.game.recoveryTurns--;
 
-    this.game.questionsAsked++;
     this.game.currentPlayer = this.game.currentPlayer === 'monsieur' ? 'madame' : 'monsieur';
     const player = this.game.currentPlayer;
     const playerName = this.state.names[player];
-    const question = this.getRandomQuestion();
-    const level = this.getHeatLevel();
 
-    // Timer réaliste
-    let duration;
-    if (question.timer) {
-      duration = Math.floor(Math.random() * (question.timer[1] - question.timer[0] + 1)) + question.timer[0];
-    } else {
-      duration = level === 'facile' ? 20 : level === 'moyen' ? 18 : level === 'chaud' ? 15 : 12;
-    }
-
-    // Pendant récupération on donne un peu plus de temps
-    if (this.game.recoveryTurns > 0) duration += 8;
+    const forcePressure = this.game.intensity >= 3.5 && Math.random() < 0.28;
+    const question = this.getRandomQuestion(forcePressure);
+    const duration = this.getTimer(question);
 
     this.clear();
 
-    let seriesInfo = '';
-    if (this.game.seriesLeft > 0) {
-      seriesInfo = `<div class="series-info">Série speed • ${4 - this.game.seriesLeft}/3</div>`;
+    let ongoingHtml = '';
+    if (this.game.ongoingGage) {
+      ongoingHtml = `<div class="ongoing">En cours : ${this.game.ongoingGage}</div>`;
     }
 
     this.app.innerHTML = `
-      <div class="game-header">
-        <div class="heat-bar"><div class="heat-fill" style="width:${this.game.heat}%"></div></div>
-        <div class="game-meta">
-          <span class="level">${level.toUpperCase()}</span>
-          <span>Éjaculations : \( {this.game.orgasmsDone}/ \){this.game.targetOrgasms}</span>
-        </div>
-      </div>
-
-      ${seriesInfo}
-
+      ${ongoingHtml}
       <div class="player-turn">À toi <strong>${playerName}</strong></div>
-
       <div class="question-card">
         <p class="question-text">${question.text}</p>
         ${question.type === 'list' ? '<p class="question-hint">Au moins ' + question.count + ' réponses</p>' : ''}
-        ${question.type === 'fetch' ? '<p class="question-hint">Tu as le droit de te lever</p>' : ''}
+        ${question.type === 'fetch' ? '<p class="question-hint">Tu peux te lever</p>' : ''}
       </div>
-
       <div class="buzz-zone">
-        <p class="buzz-hint">Réponds… puis buzz avant que ça sonne</p>
+        <p class="buzz-hint">${forcePressure ? 'PRESSION • Réponds vite' : 'Réponds… puis buzz'}</p>
         <button class="btn btn-primary btn-buzz" id="btn-buzz">BUZZ</button>
       </div>
     `;
@@ -365,16 +251,7 @@ const UI = {
       if (this.game.timeoutId) {
         clearTimeout(this.game.timeoutId);
         this.game.timeoutId = null;
-
-        // Succès
-        if (this.game.seriesLeft > 0) {
-          this.game.seriesLeft--;
-          if (this.game.seriesLeft === 0) {
-            this.game.currentSeriesQuestion = null;
-          }
-        }
-
-        this.increaseHeat(this.game.recoveryTurns > 0 ? 2 : 4);
+        this.game.intensity = Math.min(6, this.game.intensity + (forcePressure ? 0.2 : 0.1));
         this.nextTurn();
       }
     });
@@ -382,59 +259,47 @@ const UI = {
 
   onFail(loser) {
     this.game.fails++;
-    this.increaseHeat(8);
-
-    // On casse la série
-    this.game.seriesLeft = 0;
-    this.game.currentSeriesQuestion = null;
-
+    this.game.intensity = Math.min(6, this.game.intensity + 0.4);
+    this.game.ongoingGage = null; // une perte casse l’effet en cours
     this.showGage(loser);
   },
 
-  // ====================== GAGES + ÉJACULATIONS ======================
   showGage(loser) {
     const winner = loser === 'monsieur' ? 'madame' : 'monsieur';
-    const level = this.getHeatLevel();
+    const intensity = this.game.intensity;
+    const shouldOrgasm = intensity >= 5.0 && this.game.orgasmsDone < 3 && Math.random() < 0.5;
 
-    // Est-ce le moment d’une éjaculation ?
-    const shouldOrgasm = this.game.heat >= 70 && this.game.orgasmsDone < this.game.targetOrgasms && Math.random() < 0.45;
-
-    let gage;
+    let raw;
     if (shouldOrgasm) {
-      gage = this.createOrgasmGage();
+      raw = this.pickFrom(GAGES.orgasm);
+    } else if (this.game.recoveryTurns > 0) {
+      raw = this.pickFrom(GAGES.recovery);
     } else {
-      gage = this.pickSmartGage(loser, winner, level);
+      raw = this.pickSmartGage(loser, intensity);
     }
+
+    const text = this.fill(raw, loser, winner);
+    const isOrgasm = shouldOrgasm;
+    const isOngoing = raw.includes('jusqu’à la prochaine perte') || raw.includes('jusqu\'à la prochaine perte');
+    const duration = isOrgasm || isOngoing ? null : this.getGageDuration(intensity);
 
     this.clear();
 
-    let timerHtml = '';
-    if (gage.duration) {
-      timerHtml = '<div class="gage-timer" id="gage-timer">' + gage.duration + 's</div>';
-    }
+    let timerHtml = duration ? `<div class="gage-timer" id="gage-timer">${duration}s</div>` : '';
 
     this.app.innerHTML = `
-      <div class="game-header">
-        <div class="heat-bar"><div class="heat-fill" style="width:${this.game.heat}%"></div></div>
-        <div class="game-meta">
-          <span class="level">${level.toUpperCase()}</span>
-          <span>Éjaculations : \( {this.game.orgasmsDone}/ \){this.game.targetOrgasms}</span>
-        </div>
-      </div>
-
       <div class="gage-card">
-        <div class="gage-label">${gage.isOrgasm ? 'ÉJACULATION' : 'Gage pour ' + this.state.names[loser]}</div>
-        <p class="gage-text">${gage.text}</p>
+        <div class="gage-label">${isOrgasm ? 'ÉJACULATION' : 'Gage'}</div>
+        <p class="gage-text">${text}</p>
         ${timerHtml}
       </div>
-
-      <button class="btn btn-primary" id="btn-gage-done" ${gage.duration ? 'disabled' : ''}>
-        ${gage.isOrgasm ? 'Éjaculation terminée' : 'Gage terminé'}
+      <button class="btn btn-primary" id="btn-gage-done" ${duration ? 'disabled' : ''}>
+        ${isOrgasm ? 'Éjaculation terminée' : 'Gage terminé'}
       </button>
     `;
 
-    if (gage.duration) {
-      let left = gage.duration;
+    if (duration) {
+      let left = duration;
       const interval = setInterval(() => {
         left--;
         const el = document.getElementById('gage-timer');
@@ -447,152 +312,77 @@ const UI = {
       }, 1000);
     }
 
-    if (gage.removeClothes) {
-      this.removeRandomClothes(gage.removeClothes.who, gage.removeClothes.count);
-    }
+    if (isOngoing) this.game.ongoingGage = text;
 
-    if (gage.isOrgasm) {
+    if (isOrgasm) {
       this.game.orgasmsDone++;
-      this.game.recoveryTurns = 3; // 3 tours de récupération
-      this.game.heat = Math.max(40, this.game.heat - 15); // on redescend un peu
+      this.game.recoveryTurns = 5;
+      this.game.intensity = Math.max(2.5, this.game.intensity - 1.6);
     }
 
-    document.getElementById('btn-gage-done').addEventListener('click', () => {
-      this.nextTurn();
-    });
+    // Gestion simple des vêtements
+    if (raw.includes('enlève') || raw.includes('déshabiller')) {
+      const target = raw.includes('{winner}') ? winner : loser;
+      this.removeRandomClothes(target);
+    }
+
+    document.getElementById('btn-gage-done').addEventListener('click', () => this.nextTurn());
   },
 
-  createOrgasmGage() {
-    const plan = this.game.orgasmPlan[this.game.orgasmsDone] || 'visage_ou_seins';
-    const m = this.state.names.monsieur;
-    const f = this.state.names.madame;
-    const hasSwallow = this.state.acts.includes('Avaler le sperme');
-
-    if (plan === 'vaginal') {
-      return {
-        text: m + ' doit jouir dans ' + f + ' (pénétration vaginale). Prenez le temps qu’il faut.',
-        isOrgasm: true,
-        duration: null
-      };
-    }
-    if (plan === 'anal') {
-      return {
-        text: m + ' doit jouir dans ' + f + ' (pénétration anale). Allez-y doucement et prenez le temps.',
-        isOrgasm: true,
-        duration: null
-      };
-    }
-    if (plan === 'buccal' || (plan === 'visage_ou_buccal' && hasSwallow)) {
-      return {
-        text: m + ' doit jouir dans la bouche de ' + f + '. ' + (hasSwallow ? f + ' doit goûter et avaler.' : f + ' peut choisir d’avaler ou de cracher.'),
-        isOrgasm: true,
-        duration: null
-      };
-    }
-    if (plan === 'visage_ou_buccal' || plan === 'visage_ou_seins') {
-      return {
-        text: m + ' doit jouir sur le visage ou dans la bouche de ' + f + ' (au choix du moment).',
-        isOrgasm: true,
-        duration: null
-      };
-    }
-    if (plan === 'seins_ou_entre' || plan === 'seins_ou_fesses') {
-      return {
-        text: m + ' doit jouir sur les seins, entre les seins ou sur les fesses de ' + f + '.',
-        isOrgasm: true,
-        duration: null
-      };
-    }
-
-    // fallback
-    return {
-      text: m + ' doit jouir sur ' + f + ' (endroit au choix selon ce qui est autorisé).',
-      isOrgasm: true,
-      duration: null
-    };
+  pickSmartGage(loser, intensity) {
+    const isMadame = loser === 'madame';
+    if (intensity < 1.8) return this.pickFrom(GAGES.soft);
+    if (intensity < 2.8) return this.pickFrom(GAGES.tease);
+    if (intensity < 3.7) return this.pickFrom(GAGES.touch);
+    if (intensity < 4.6) return this.pickFrom(isMadame ? GAGES.oral_f : GAGES.oral_m);
+    if (Math.random() < 0.35) return this.pickFrom(GAGES.ongoing);
+    return this.pickFrom(GAGES.heavy);
   },
 
-  pickSmartGage(loser, winner, level) {
-    const m = this.state.names.monsieur;
-    const f = this.state.names.madame;
-    const hasBottomLoser = this.hasBottomClothes(loser);
-    const hasBottomWinner = this.hasBottomClothes(winner);
-    const props = this.state.props;
+  pickFrom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  },
 
-    // Pendant récupération → gages plus doux
-    if (this.game.recoveryTurns > 0) {
-      return {
-        text: this.state.names[loser] + ' caresse doucement ' + this.state.names[winner] + ' pendant 40 secondes (récupération).',
-        duration: 40
-      };
-    }
+  fill(template, loser, winner) {
+    let t = template;
+    t = t.replace(/{loser}/g, this.state.names[loser]);
+    t = t.replace(/{winner}/g, this.state.names[winner]);
+    t = t.replace(/{monsieur}/g, this.state.names.monsieur);
+    t = t.replace(/{madame}/g, this.state.names.madame);
 
-    if (level === 'facile') {
-      if (this.game.remainingClothes[loser].length > 0 || this.game.remainingClothes[winner].length > 0) {
-        const who = Math.random() < 0.55 ? winner : loser;
-        return {
-          text: this.state.names[loser] + ' enlève un vêtement de ' + this.state.names[who] + '.',
-          removeClothes: { who: who, count: 1 }
-        };
-      }
-      return {
-        text: this.state.names[loser] + ' embrasse et caresse ' + this.state.names[winner] + ' pendant 35 secondes.',
-        duration: 35
-      };
-    }
+    const prop = this.state.props.length > 0
+      ? this.state.props[Math.floor(Math.random() * this.state.props.length)]
+      : 'un objet à portée de main';
+    t = t.replace(/{prop}/g, prop);
 
-    if (level === 'moyen') {
-      if (hasBottomLoser || hasBottomWinner) {
-        const who = hasBottomWinner ? winner : loser;
-        return {
-          text: this.state.names[loser] + ' enlève un vêtement du bas de ' + this.state.names[who] + '.',
-          removeClothes: { who: who, count: 1 }
-        };
-      }
-      if (props.length > 0 && Math.random() < 0.4) {
-        const prop = props[Math.floor(Math.random() * props.length)];
-        return {
-          text: this.state.names[loser] + ' utilise ' + prop + ' sur ' + this.state.names[winner] + ' pendant 45 secondes.',
-          duration: 45
-        };
-      }
-      return {
-        text: this.state.names[loser] + ' caresse ' + this.state.names[winner] + ' de façon de plus en plus coquine pendant 50 secondes.',
-        duration: 50
-      };
-    }
+    const swallow = this.state.acts.includes('Avaler le sperme')
+      ? 'doit goûter et avaler'
+      : 'peut recracher';
+    t = t.replace(/{swallow}/g, swallow);
 
-    if (level === 'chaud') {
-      if (hasBottomLoser) {
-        return {
-          text: this.state.names[loser] + ' enlève le dernier vêtement du bas et se touche pendant 40 secondes.',
-          duration: 40,
-          removeClothes: { who: loser, count: 1 }
-        };
-      }
-      if (Math.random() < 0.4) {
-        return {
-          text: this.state.names[loser] + ' fait une fellation / un cunnilingus à ' + this.state.names[winner] + ' pendant 60 secondes.',
-          duration: 60
-        };
-      }
-      return {
-        text: this.state.names[loser] + ' se masturbe devant ' + this.state.names[winner] + ' pendant 45 secondes.',
-        duration: 45
-      };
-    }
+    return t;
+  },
 
-// torride (mais pas encore éjaculation forcée)
-    if (Math.random() < 0.5) {
-      return {
-        text: this.state.names[loser] + ' doit faire plaisir à ' + this.state.names[winner] + ' avec la bouche pendant 70 secondes.',
-        duration: 70
-      };
-    }
-    return {
-      text: this.state.names[loser] + ' et ' + this.state.names[winner] + ' s’embrassent et se touchent intensément pendant 60 secondes.',
-      duration: 60
-    };
+  getGageDuration(intensity) {
+    if (intensity < 2) return 40;
+    if (intensity < 3.5) return 55;
+    if (intensity < 4.8) return 70;
+    return 85;
+  },
+
+  removeRandomClothes(who) {
+    const list = this.game.remainingClothes[who];
+    if (list.length === 0) return;
+    list.splice(Math.floor(Math.random() * list.length), 1);
+  },
+
+  getRandomQuestion(forceHard) {
+    const level = forceHard ? 'torride' :
+      this.game.intensity < 1.8 ? 'facile' :
+      this.game.intensity < 3.3 ? 'moyen' :
+      this.game.intensity < 4.7 ? 'chaud' : 'torride';
+    const pool = QUESTIONS[level] || QUESTIONS.facile;
+    return pool[Math.floor(Math.random() * pool.length)];
   },
 
   showVictory() {
@@ -601,7 +391,7 @@ const UI = {
       <div class="header"><h1>Vertige</h1><p>La fin</p></div>
       <div class="promise">
         <p>Vous êtes allés jusqu’au bout.</p>
-        <p>\( {this.game.orgasmsDone} éjaculation \){this.game.orgasmsDone > 1 ? 's' : ''}.</p>
+        <p>3 éjaculations.</p>
         <p class="signature">Vos corps ont tremblé.<br>Le jeu est terminé.</p>
       </div>
       <button class="btn btn-primary" onclick="location.reload()">Recommencer</button>
